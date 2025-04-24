@@ -59,7 +59,7 @@ The following scripts will automatically download data from [LiveSports3K](https
 
 ```bash
 # generate livecc
-python evaluation/livesports3kcc/distributed_generate_livecc.py --model_path chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
+python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
 # llm judge winning rate
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_result_jsonl chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
 ```
@@ -69,7 +69,7 @@ If you do not have GPT-4o quota, please submit results at [CVPR'25 LoVE Workshop
 ##### Offline Caption (e.g. GPT-4o, Qwen2.5VL, etc)
 
 ```
-python evaluation/livesports3kcc/distributed_generate_caption.py --model_path Qwen/Qwen2.5-VL-7B-Instruct --output_dir evaluation/livesports3kcc/captions --num_workers 8
+python evaluation/livesports3kcc/distributed_generate_caption.py --model_name_or_path Qwen/Qwen2.5-VL-7B-Instruct --output_dir evaluation/livesports3kcc/captions --num_workers 8
 ```
 
 #### LiveSports3KQA
@@ -84,9 +84,9 @@ Our fast distributed VideoMME evaluator needs ```videomme.jsonl``` with the data
 After preparation, please run:
 ```shell
 # without subtitles
-torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl
+torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl
 # with subtitles
-torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl --with_subtitles
+torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl --with_subtitles
 ```
 Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish the evaluation (8x80G GPUs). The results will be written to [evaluation/videomme/results](evaluation/videomme/results). We also provided the evaluation results of [LiveCC-7B-Instruct](https://huggingface.co/chenjoya/LiveCC-7B-Instruct) at [evaluation/videomme/results](evaluation/videomme/results).
 

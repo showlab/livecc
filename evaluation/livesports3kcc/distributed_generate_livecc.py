@@ -2,6 +2,7 @@ import argparse
 import os
 import json
 import tqdm
+import shutil
 import multiprocessing
 from functools import partial
 from datasets import load_dataset, Dataset
@@ -14,7 +15,7 @@ def parse_args():
         description="Distributed LiveCC generation over the LiveSports-3K CC split"
     )
     parser.add_argument(
-        "--model_path", type=str, required=True,
+        "--model_name_or_path", type=str, required=True,
         help="HuggingFace model path, e.g., chenjoya/LiveCC-7B-Instruct"
     )
     parser.add_argument(
@@ -30,8 +31,8 @@ def parse_args():
 
 def livecc_worker(
     device_id: int,
-    model_path: str,
-    output_dir: str,
+    model_name_or_path: str,
+    save_dir: str,
     num_workers: int
 ):
     ds_val = load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="val")
@@ -39,23 +40,23 @@ def livecc_worker(
     records = [dict(r) for r in ds_val] + [dict(r) for r in ds_test]
     ds = Dataset.from_list(records)
 
-    infer = LiveCCDemoInfer(model_path=model_path, device=f'cuda:{device_id}')
+    infer = LiveCCDemoInfer(model_name_or_path=model_name_or_path, device=f'cuda:{device_id}')
     total = len(ds)
     idxs = list(range(total))
     idxs_on_device = idxs[device_id::num_workers]
 
     # Prepare save folder for this model
-    model_name = os.path.basename(model_path)
-    save_folder = os.path.join(output_dir, model_name)
-    os.makedirs(save_folder, exist_ok=True)
+    os.makedirs(save_dir, exist_ok=True)
 
     for idx in tqdm.tqdm(idxs_on_device, desc=f"Device {device_id}", total=len(idxs_on_device)):
-        save_path = os.path.join(save_folder, f"{idx}.json")
+        save_path = os.path.join(save_dir, f"{idx}.json")
         if os.path.exists(save_path):
             continue
 
         record = ds[idx]
         video = record.get("video")
+        video_id = record.get("video_id")
+        event_id = record.get("event_id")
         video_start = record.get("begin")
         video_end = record.get("end")
         title = record.get("event_title")
@@ -87,19 +88,21 @@ def livecc_worker(
 
         with open(save_path, 'w') as wf:
             json.dump({
-                "video": video,
-                "video_start": video_start,
-                "video_end": video_end,
-                "commentary": overall_cc
+                "video_id": video_id,
+                'event_id': event_id,
+                "begin": video_start,
+                "end": video_end,
+                "pred": overall_cc
             }, wf)
 
 if __name__ == "__main__":
     args = parse_args()
     multiprocessing.set_start_method('spawn', force=True)
+    save_dir = os.path.join(args.output_dir, os.path.basename(args.model_name_or_path))
     worker_fn = partial(
         livecc_worker,
-        model_path=args.model_path,
-        output_dir=args.output_dir,
+        model_name_or_path=args.model_name_or_path,
+        save_dir=save_dir,
         num_workers=args.num_workers
     )
     local_mp(
@@ -108,3 +111,12 @@ if __name__ == "__main__":
         desc="livecc_generation",
         num_workers=args.num_workers
     )
+    # jsons -> jsonl
+    save_path = save_dir + '.jsonl'
+    with open(save_path, 'w') as wf:
+        for file in os.listdir(save_dir):
+            datum = json.load(open(os.path.join(save_dir, file))) 
+            wf.write(json.dumps(datum) + '\n')
+    # remove save_dir
+    shutil.rmtree(save_dir)
+

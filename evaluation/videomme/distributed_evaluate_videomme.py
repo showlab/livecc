@@ -13,7 +13,7 @@ def main():
         description="Distributed evaluation for VideoMME models"
     )
     parser.add_argument(
-        "--model_path", type=str, required=True,
+        "--model_name_or_path", type=str, required=True,
         help="Path or identifier of the pretrained model"
     )
     parser.add_argument(
@@ -28,13 +28,13 @@ def main():
 
     # Load model and processor
     model = Qwen2VLForConditionalGeneration.from_pretrained(
-        args.model_path,
+        args.model_name_or_path,
         torch_dtype="auto",
         attn_implementation="flash_attention_2"
     )
     processor_name = (
-        args.model_path
-        if args.model_path != 'Qwen/Qwen2-VL-7B'
+        args.model_name_or_path
+        if args.model_name_or_path != 'Qwen/Qwen2-VL-7B'
         else 'Qwen/Qwen2-VL-7B-Instruct'
     )
     processor = AutoProcessor.from_pretrained(
@@ -49,7 +49,7 @@ def main():
         benchmark_path=args.benchmark_path,
         remote_loader=videomme_tos_loader,
         letters=['A', 'B', 'C', 'D'],
-        use_liger_kernel='LiveCC' in args.model_path,
+        use_liger_kernel='LiveCC' in args.model_name_or_path,
         per_device_eval_batch_size=1,
         with_subtitles=args.with_subtitles
     )
@@ -86,7 +86,7 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         save_json_path = os.path.join(
             out_dir,
-            f"{os.path.basename(args.model_path)}_{suffix}.json"
+            f"{os.path.basename(args.model_name_or_path)}_{suffix}.json"
         )
 
         # Save JSON

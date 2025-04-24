@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DESCRIPTION META TAG">
+  <meta property="og:title" content="LiveCC"/>
+  <meta property="og:description" content="LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale"/>
+  <meta property="og:url" content="https://showlab.github.io/livecc/"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="webpage/static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="LiveCC">
+  <meta name="twitter:description" content="LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="webpage/static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>LiveCC</title>
+  <link rel="icon" type="image/x-icon" href="webpage/static/images/assistant_rectangle.png">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="webpage/static/css/bulma.min.css">
+  <link rel="stylesheet" href="webpage/static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="webpage/static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="webpage/static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="webpage/static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="webpage/static/js/fontawesome.all.min.js"></script>
+  <script src="webpage/static/js/bulma-carousel.min.js"></script>
+  <script src="webpage/static/js/bulma-slider.min.js"></script>
+  <script src="webpage/static/js/index.js"></script>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-4 publication-title">LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale</h1>
+            <div class="is-size-6 publication-authors">
+            <span class="author-block">
+              <a href="https://chenjoya.github.io/" target="_blank">Joya Chen<sup>*</sup></a>,
+            </span>
+            <span class="author-block">
+                <a href="https://stdkonjac.icu/" target="_blank">Ziyun Zeng<sup>*</sup></a>,
+            </span>
+            <span class="author-block">
+                <a href="https://linyq17.github.io/" target="_blank">Yiqi Lin<sup>*</sup></a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=q8ZrKVIAAAAJ&hl=zh-CN" target="_blank">Wei Li</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=XwY9LXoAAAAJ&hl=zh-CN" target="_blank">Zejun Ma</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://sites.google.com/view/showlab" target="_blank">Mike Zheng Shou</a>
+            </span>
+            </div>
+            <div class="is-size-6 publication-authors">
+              <span class="author-block">
+                <a href="https://sites.google.com/view/showlab" target="_blank">Show Lab, National University of Singapore</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="..." target="_blank">ByteDance</a><br>
+                CVPR 2025
+              </span>
+              <p style="text-align: center;"><small><sup>*</sup>Equal Contribution</small></p>
+            </div>
+                  
+            <span class="link-block">
+                <a href="https://huggingface.co/papers/2504.16030" target="_blank"
+                    class="external-link button is-small is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>Paper</span>
+                </a>
+            </span>
+
+            <span class="link-block">
+                <a href="https://huggingface.co/spaces/chenjoya/LiveCC" target="_blank" 
+                    class="external-link button is-small is-rounded is-dark">
+                    <span class="icon">
+                      <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                          alt="Hugging Face" style="width: 1em; height: 1em;">
+                    </span>
+                    <span>Demo</span>
+                </a>
+            </span>
+
+            <span class="link-block">
+                <a href="https://huggingface.co/chenjoya/LiveCC-7B-Instruct" target="_blank" 
+                    class="external-link button is-small is-rounded is-dark">
+                    <span class="icon">
+                      <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                          alt="Hugging Face" style="width: 1em; height: 1em;">
+                    </span>
+                    <span>Model</span>
+                </a>
+            </span>
+                
+            <span class="link-block">
+                <a href="https://huggingface.co/datasets/chenjoya/Live-WhisperX-526K" target="_blank" 
+                    class="external-link button is-small is-rounded is-dark">
+                    <span class="icon">
+                      <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                          alt="Hugging Face" style="width: 1em; height: 1em;">
+                    </span>
+                    <span>Datasets</span>
+                </a>
+            </span>
+            
+            <span class="link-block">
+                <a href="https://huggingface.co/datasets/stdKonjac/LiveSports-3K" target="_blank" 
+                  class="external-link button is-small is-rounded is-dark">
+                  <span class="icon">
+                    <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                          alt="Hugging Face" style="width: 1em; height: 1em;">
+                  </span>
+                  <span>Benchmark</span>
+                </a>
+            </span>
+
+            <span class="link-block">
+              <a href="https://huggingface.co/collections/chenjoya/livecc-67e29b3df1b6b5c6d5d682f4" target="_blank" 
+                class="external-link button is-small is-rounded is-dark">
+                <span class="icon">
+                  <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                        alt="Hugging Face" style="width: 1em; height: 1em;">
+                </span>
+                <span>Collection</span>
+              </a>
+          </span>
+
+            <span class="link-block">
+              <a href="https://sites.google.com/view/loveucvpr25/track2a" target="_blank" 
+                class="external-link button is-small is-rounded is-dark">
+                <span class="icon">
+                  🏆
+                </span>
+                <span>Competition</span>
+              </a>
+            </span>
+
+            <span class="link-block">
+                <a href="https://github.com/showlab/livecc" target="_blank"
+                    class="external-link button is-small is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Training Code</span>
+                </a>
+            </span>
+            
+            <h2 class="subtitle is-7">TLDR: The first video LLM capable of real-time commentary, trained with a novel video-ASR streaming method, SOTA on both streaming and offline benchmarks.</h2>
+            
+            <style>
+              .video-container {
+                max-width: 800px; 
+                margin: 0 auto;
+              }
+              .video-row {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;     /* top‑align captions/videos */
+                gap: 10px;                       /* consistent spacing */
+                flex-wrap: wrap;               /* allow wrapping on small screens */
+                margin-bottom: 20px;
+              }
+              .video-box {
+                text-align: center;
+                flex: 1 1 395px;              /* grow/shrink, base width 360px */
+                max-width: 395px;    
+              }
+              /* special full‑width box for Example 1 */
+              .video-box.full {
+                flex: 1 1 800px; 
+                max-width: 800px; 
+              }
+              .video-box p {
+                margin: 0 0 5px;
+                font-size: 14px;
+              }
+              .video-box video {
+                width: 100%;
+                height: auto;
+              }
+            </style>
+            
+            <div class="video-container">
+            
+              <!-- Example 1 (full‑width) -->
+              <div class="video-row">
+                <div class="video-box full">
+                  <figure>
+                    <video autoplay controls loop>
+                      <source src="webpage/static/videos/teaser.mp4" type="video/mp4">
+                    </video>
+                    <figcaption>📷 Recording | 🏀 NBA Playoffs (Apr 21) | 🛠️ How-To | 🎮 Dota2 7.38c (Mar 27) | 🚀 SpaceX (Apr 21)</figcaption>
+                  </figure>
+                </div>
+              </div>
+            
+              <!-- Examples 2 & 3 -->
+              <!-- <div class="video-row">
+                <div class="video-box">
+                  <p>Example 2. Real-Time Game Commentary</p>
+                  <video autoplay controls loop>
+                    <source src="webpage/static/videos/demo2.mp4" type="video/mp4">
+                  </video>
+                </div>
+                <div class="video-box">
+                  <p>Example 3. Real-Time Documentary Commentary</p>
+                  <video autoplay controls loop>
+                    <source src="webpage/static/videos/demo3.mp4" type="video/mp4">
+                  </video>
+                </div>
+              </div>  -->
+            
+              <!-- Examples 4 & 5 -->
+              <!-- <div class="video-row">
+                <div class="video-box">
+                  <p>Example 4. Real-Time Education Commentary</p>
+                  <video autoplay controls loop>
+                    <source src="webpage/static/videos/demo4.mp4" type="video/mp4">
+                  </video>
+                </div>
+                <div class="video-box">
+                  <p>Example 5. Real-Time News Commentary</p>
+                  <video autoplay controls loop>
+                    <source src="webpage/static/videos/demo5.mp4" type="video/mp4">
+                  </video>
+                </div>
+              </div> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Recent video large language models (Video LLMs) often depend on costly human annotations or proprietary model APIs (e.g., GPT-4o) to produce training data, which limits their training at scale. In this paper, we explore large-scale training for Video LLM with cheap automatic speech recognition (ASR) transcripts. Specifically, we propose a novel streaming training approach that densely interleaves the ASR words and video frames according to their timestamps. Compared to previous studies in vision-language representation with ASR, our method naturally fits the streaming characteristics of ASR, thus enabling the model to learn temporally-aligned, fine-grained vision-language modeling. To support the training algorithm, we introduce a data production pipeline to process YouTube videos and their closed captions (CC, same as ASR), resulting in Live-CC-5M dataset for pre-training and Live-WhisperX-526K dataset for high-quality supervised fine-tuning (SFT). Remarkably, even without SFT, the ASR-only pre-trained LiveCC-7B-Base model demonstrates competitive general video QA performance and exhibits a new capability in real-time video commentary. To evaluate this, we carefully design a new LiveSports-3K benchmark, using LLM-as-a-judge to measure the free-form commentary. Experiments show our final LiveCC-7B-Instruct model can surpass advanced 72B models (Qwen2.5-VL-72B-Instruct, LLaVA-Video-72B) in commentary quality even working in a real-time mode. Meanwhile, it achieves state-of-the-art results at the 7B/8B scale on popular video QA benchmarks such as VideoMME and OVOBench, demonstrating the broad generalizability of our approach. All resources of this paper have been released at https://showlab.github.io/livecc.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered has-text-centered">
+        <div class="item" style="width: 1000px; height: 1200px;">
+          <iframe 
+            src="webpage/static/pdf/livecc_simple.pdf" 
+            width="1000" 
+            height="1200" 
+            style="border: none;">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{livecc,
+    author    = {Joya Chen and Ziyun Zeng and Yiqi Lin and Wei Li and Zejun Ma and Mike Zheng Shou},
+    title     = {LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale},
+    booktitle = {CVPR},
+    year      = {2025},
+  }</code></pre>
+    </div>
+  </section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>

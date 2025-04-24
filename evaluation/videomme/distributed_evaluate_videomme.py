@@ -82,11 +82,11 @@ def main():
 
         # Determine output paths
         suffix = 'with_subtitles' if args.with_subtitles else 'no_subtitles'
-        out_dir = f'evaluation/videomme/results_{suffix}'
+        out_dir = f'evaluation/videomme/results'
         os.makedirs(out_dir, exist_ok=True)
         save_json_path = os.path.join(
             out_dir,
-            f"{os.path.basename(args.model_path)}.json"
+            f"{os.path.basename(args.model_path)}_{suffix}.json"
         )
 
         # Save JSON

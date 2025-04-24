@@ -59,20 +59,23 @@ Finish README.md on Apr 24.
 
 #### VideoMME
 
-Our fast VideoMME evaluator needs the following data format as ```videomme.jsonl```:
+Our fast distributed VideoMME evaluator needs ```videomme.jsonl``` with the data format of each line as:
 ```json
 {"video_id": "001", "duration": "short", "domain": "Knowledge", "sub_category": "Humanity & History", "url": "https://www.youtube.com/watch?v=fFjv93ACGo8", "videoID": "fFjv93ACGo8", "question_id": "001-1", "task_type": "Counting Problem", "question": "When demonstrating the Germany modern Christmas tree is initially decorated with apples, candles and berries, which kind of the decoration has the largest number?", "options": ["A. Apples.", "B. Candles.", "C. Berries.", "D. The three kinds are of the same number."], "answer": "C", "tos_key": "evaluation/testsets/video_undestanding/videomme/videos/fFjv93ACGo8.mp4", "subtitles": "[Music] and new at 6:00 ..."}
-...
 ```
 
-Then, running
+After preparation, please run:
 ```shell
 # without subtitles
 torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl
 # with subtitles
 torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl --with_subtitles
 ```
-Typically, it costs 40~50min to finish the evaluation. We also provided the evaluation results of [LiveCC-7B-Instruct](https://huggingface.co/chenjoya/LiveCC-7B-Instruct) at [evaluation/videomme/results](evaluation/videomme/results).
+Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish the evaluation (8x80G GPUs). We also provided the evaluation results of [LiveCC-7B-Instruct](https://huggingface.co/chenjoya/LiveCC-7B-Instruct) at [evaluation/videomme/results](evaluation/videomme/results).
+
+#### OVOBench
+
+#### MVBench
 
 ### Data Production Pipeline
 

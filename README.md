@@ -64,7 +64,7 @@ python evaluation/livesports3kcc/distributed_generate_livecc.py --model_path che
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_result_jsonl chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
 ```
 
-If you do not have GPT-4o quota, please submit results [here](https://sites.google.com/view/loveucvpr25/track2a). We cover the GPT-4o evaluation cost 1 times per day for every participant.
+If you do not have GPT-4o quota, please submit results at [CVPR'25 LoVE Workshop Track2A](https://sites.google.com/view/loveucvpr25/track2a). We cover the GPT-4o evaluation cost 1 times per day for every participant.
 
 ##### Offline Caption (e.g. GPT-4o, Qwen2.5VL, etc)
 

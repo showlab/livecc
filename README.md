@@ -63,6 +63,8 @@ python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_
 # llm judge winning rate
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_result_jsonl chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
 ```
+<img width="1253" alt="image" src="https://github.com/user-attachments/assets/5064cc1f-23a7-469a-8a06-ca29707c5944" />
+(Slightly better than reported in our paper due to GPT-4o output are not strictly stable 😂, even if we set ```seed=42, temperature=0```)
 
 If you do not have GPT-4o quota, please submit results at [CVPR'25 LoVE Workshop Track2A](https://sites.google.com/view/loveucvpr25/track2a). We cover the GPT-4o evaluation cost 1 times per day for every participant.
 

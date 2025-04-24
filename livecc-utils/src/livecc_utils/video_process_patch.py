@@ -1,10 +1,10 @@
-# NOTE: Some parts were borrowed from qwen2_vl_utils. We modified them for better use in LiveCC.
+# NOTE: Some parts were borrowed from qwen_vl_utils. We modified them for better use in LiveCC.
 # Feel free to contact joyachen@u.nus.edu for any problems. Thank you!
 
-import os, torch, functools
+import os, torch
 import numpy as np
 import decord # NOTE: import decord should be after torch, otherwise seg fault
-from transformers import Qwen2VLForConditionalGeneration, logging
+from transformers import logging
 from torchvision import transforms
 
 os.environ['FORCE_QWENVL_VIDEO_READER'] = 'decord+'
@@ -14,7 +14,7 @@ qwen_vl_utils.vision_process.VIDEO_MIN_PIXELS = int(os.environ.get('VIDEO_MIN_PI
 qwen_vl_utils.vision_process.FPS_MAX_FRAMES = int(os.environ.get('FPS_MAX_FRAMES', 480)) # decrease this for efficiency 
 from qwen_vl_utils.vision_process import (
     FORCE_QWENVL_VIDEO_READER, VIDEO_TOTAL_PIXELS, FPS_MAX_FRAMES, VIDEO_MIN_PIXELS, VIDEO_MAX_PIXELS, FRAME_FACTOR, IMAGE_FACTOR, FPS,
-    process_vision_info, smart_nframes, smart_resize
+    smart_nframes, smart_resize
 )
 
 logger = logging.get_logger(__name__)

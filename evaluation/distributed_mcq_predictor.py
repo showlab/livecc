@@ -13,7 +13,7 @@ from qwen_vl_utils import process_vision_info
 logger = logging.get_logger(__name__)
 
 class MCQDataset(Dataset):
-    def __init__(self, remote_loader, path, question_prefix, question_postfix, answer_prefix, sample: int = None):
+    def __init__(self, remote_loader, path, question_prefix, question_postfix, answer_prefix, with_subtitles: bool = False, sample: int = None):
         lines = open(path).readlines()
         if sample is not None:
             random.seed(42)
@@ -25,6 +25,7 @@ class MCQDataset(Dataset):
         self.question_postfix = question_postfix
         self.answer_prefix = answer_prefix
         self.remote_loader = remote_loader
+        self.with_subtitles = with_subtitles
         
     def __len__(self):
         return len(self.datums)
@@ -41,7 +42,7 @@ class MCQDataset(Dataset):
                 conversation[0]['content'][-1]['video_start'] = datum['video_start']
             if 'video_end' in datum:
                 conversation[0]['content'][-1]['video_end'] = datum['video_end']
-        if 'subtitles' not in datum or not datum['subtitles']:
+        if not self.with_subtitles:
             conversation[0]['content'].append({"type": "text", "text": query})
         else:
             query = f"This video's subtitles are listed below:\n{datum['subtitles']}\nAccording to the video and subtitles, "  + query
@@ -76,7 +77,7 @@ def mcq_predict(
     processor, 
     benchmark_path: str, 
     letters: list[str], 
-    remote_loader: callable,
+    remote_loader: callable = None,
     question_prefix: str = '', 
     question_postfix: str = '\nPlease select the correct answer.', 
     answer_prefix: str = 'Answer:', 
@@ -84,9 +85,10 @@ def mcq_predict(
     use_liger_kernel: bool = True,
     per_device_eval_batch_size: int = 2,
     dataloader_num_workers: int = 4,
+    with_subtitles: bool = False
 ):
     strict_letter_ids = [processor.tokenizer(f'{abcd_previous_str}{_}').input_ids[-1] for _ in letters] 
-    dataset = MCQDataset(remote_loader, benchmark_path, question_prefix=question_prefix, question_postfix=question_postfix, answer_prefix=answer_prefix)
+    dataset = MCQDataset(remote_loader, benchmark_path, question_prefix=question_prefix, question_postfix=question_postfix, answer_prefix=answer_prefix, with_subtitles=with_subtitles)
     trainer = Trainer(
         model=model, 
         args=TrainingArguments(

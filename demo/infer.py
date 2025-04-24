@@ -2,7 +2,7 @@ import functools, torch
 from liger_kernel.transformers import apply_liger_kernel_to_qwen2_vl
 apply_liger_kernel_to_qwen2_vl()
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor, LogitsProcessor, logging
-from livecc_utils import prepare_multiturn_multimodal_inputs_for_generation, get_smart_resized_clip, get_smart_resized_video_reader
+from livecc_utils import prepare_multiturn_multimodal_inputs_for_generation, get_smart_resized_clip, get_smart_resized_video_reader, _read_video_decord_plus, _spatial_resize_video
 from qwen_vl_utils import process_vision_info
 
 logger = logging.get_logger(__name__)
@@ -36,7 +36,7 @@ class LiveCCDemoInfer:
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_path, torch_dtype="auto", 
             device_map=device, 
-            attn_implementation='sdpa'
+            attn_implementation='flash_attention_2'
         )
         self.processor = AutoProcessor.from_pretrained(model_path, use_fast=False)
         self.streaming_eos_token_id = self.processor.tokenizer(' ...').input_ids[-1]
@@ -205,7 +205,6 @@ class LiveCCDemoInfer:
         if past_ids is None and video_path: # only use once
             content.insert(0, {"type": "video", "video": video_path})
         conversation.append({"role": "user", "content": content})
-        print(conversation)
         image_inputs, video_inputs = process_vision_info(conversation)
         texts = self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=True, return_tensors='pt')
         if past_ids is not None:
@@ -229,5 +228,71 @@ class LiveCCDemoInfer:
         state['past_key_values'] = outputs.past_key_values if not hf_spaces else None
         state['past_ids'] = outputs.sequences[:, :-1] if not hf_spaces else None
         response = self.processor.decode(outputs.sequences[0, inputs.input_ids.size(1):], skip_special_tokens=True)
-        print(response)
         return response, state
+
+    @torch.inference_mode()
+    def live_cc_once_for_evaluation(
+        self,
+        query: str,
+        video: str,
+        video_start: float = None,
+        video_end: float = None,
+        remote_loader: callable = None,
+        max_new_tokens: int = 32,
+        repetition_penalty: float = 1.05,
+    ): 
+        # 1. read video clip
+        if video.startswith('ytb_'):
+            tos_key = 'youtube_video_2024/' + video
+        else:
+            tos_key = 'video/youtube/' + video
+        clip, _ = _read_video_decord_plus({'video': tos_key, 'video_start': video_start, 'video_end': video_end, 'remote_loader': remote_loader})
+        clip = _spatial_resize_video(clip)
+
+        # 2. organize to interleave frames
+        interleave_clips = []
+        ## 2.1 initial_fps_frames
+        interleave_clips.append(clip[:self.initial_fps_frames])
+        clip = clip[self.initial_fps_frames:]
+        ## 2.2 streaming_fps_frames
+        if len(clip) > 0:
+            interleave_clips.extend(list(clip.split(self.streaming_fps_frames)))
+        
+        # 3. make conversation and send to model
+        past_key_values = None
+        responses = []
+        for i, clip in enumerate(interleave_clips):
+            if i == 0:
+                start_timestamp, stop_timestamp = 0, self.initial_time_interval
+            else:
+                start_timestamp, stop_timestamp = stop_timestamp, stop_timestamp + self.streaming_time_interval
+            message = {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": f'Time={start_timestamp:.1f}-{stop_timestamp:.1f}s'},
+                    {"type": "video", "video": clip}
+                ]
+            }
+            if not past_key_values:
+                message['content'].append({"type": "text", "text": query})
+            texts = self.processor.apply_chat_template([message], tokenize=False, add_generation_prompt=True, return_tensors='pt')
+            if past_key_values:
+                texts = '<|im_end|>\n' + texts[self.system_prompt_offset:]
+            inputs = self.processor(
+                text=texts,
+                images=None,
+                videos=[clip],
+                return_tensors="pt",
+            )
+            inputs.to(self.model.device)
+            if past_key_values:
+                inputs['input_ids'] = torch.cat([past_ids, inputs.input_ids], dim=1) 
+            outputs = self.model.generate(**inputs, past_key_values=past_key_values, return_dict_in_generate=True, max_new_tokens=max_new_tokens, repetition_penalty=repetition_penalty)
+            past_key_values = outputs.past_key_values
+            past_ids = outputs.sequences[:, :-1]
+            responses.append([
+                video_start + start_timestamp, 
+                video_start + stop_timestamp, 
+                self.processor.decode(outputs.sequences[0, inputs.input_ids.size(1):], skip_special_tokens=True)
+            ])
+        return responses

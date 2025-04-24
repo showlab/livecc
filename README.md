@@ -45,15 +45,30 @@ python demo/cli.py
 
 Please refer to [inference.md](https://github.com/showlab/livecc/blob/main/inference.md)
 
-### TODO
-
-Finish README.md on Apr 24.
-
 ### Training
+
+Finish on Apr 25.
 
 ### Evaluation
 
-#### LiveSports3kCC
+#### LiveSports3KCC
+
+The following scripts will automatically download data from [LiveSports3K](https://huggingface.co/datasets/stdKonjac/LiveSports-3K).
+
+##### Real-time Video Commentary (LiveCC)
+
+```bash
+# generate livecc
+python evaluation/livesports3kcc/distributed_generate_livecc.py --model_path chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
+# llm judge winning rate
+AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_result_jsonl chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8
+```
+
+##### Offline Caption (e.g. GPT-4o, Qwen2.5VL, etc)
+
+```
+python evaluation/livesports3kcc/distributed_generate_caption.py --model_path Qwen/Qwen2.5-VL-7B-Instruct --output_dir evaluation/livesports3kcc/captions --num_workers 8
+```
 
 #### LiveSports3KQA
 
@@ -71,13 +86,19 @@ torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluat
 # with subtitles
 torchrun --standalone --nproc_per_node=8 evaluation/videomme/distributed_evaluate_videomme.py --model_path chenjoya/LiveCC-7B-Instruct --benchmark_path videomme.jsonl --with_subtitles
 ```
-Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish the evaluation (8x80G GPUs). We also provided the evaluation results of [LiveCC-7B-Instruct](https://huggingface.co/chenjoya/LiveCC-7B-Instruct) at [evaluation/videomme/results](evaluation/videomme/results).
+Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish the evaluation (8x80G GPUs). The results will be written to [evaluation/videomme/results](evaluation/videomme/results). We also provided the evaluation results of [LiveCC-7B-Instruct](https://huggingface.co/chenjoya/LiveCC-7B-Instruct) at [evaluation/videomme/results](evaluation/videomme/results).
 
 #### OVOBench
 
+Finish on Apr 26.
+
 #### MVBench
 
+Finish on Apr 26.
+
 ### Data Production Pipeline
+
+Finish on Apr 27.
 
 #### Pre-training
 

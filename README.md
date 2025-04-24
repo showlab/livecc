@@ -64,7 +64,8 @@ python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --prediction_jsonl evaluation/livesports3kcc/livecc/LiveCC-7B-Instruct.jsonl --output_dir evaluation/livesports3kcc/judges --num_workers 16
 ```
 <img width="1253" alt="image" src="https://github.com/user-attachments/assets/5064cc1f-23a7-469a-8a06-ca29707c5944" />
-(Slightly better than reported in our paper due to GPT-4o output are not strictly stable 😂, even if we set ```seed=42, temperature=0```)
+
+(Slightly better than reported in our paper, this is because GPT-4o output are not strictly stable, even if we set ```seed=42, temperature=0```😂)
 
 If you do not have GPT-4o quota, please submit results at [CVPR'25 LoVE Workshop Track2A](https://sites.google.com/view/loveucvpr25/track2a). We cover the GPT-4o evaluation cost 1 time per day for every participant.
 

@@ -7,7 +7,6 @@ import multiprocessing
 from functools import partial
 from datasets import load_dataset, Dataset
 from demo.infer import LiveCCDemoInfer
-from data.tos import tos_loader
 from utils.multiprocessor import local_mp
 
 def parse_args():
@@ -40,7 +39,7 @@ def livecc_worker(
     records = [dict(r) for r in ds_val] + [dict(r) for r in ds_test]
     ds = Dataset.from_list(records)
 
-    infer = LiveCCDemoInfer(model_name_or_path=model_name_or_path, device=f'cuda:{device_id}')
+    infer = LiveCCDemoInfer(model_path=model_name_or_path, device=f'cuda:{device_id}')
     total = len(ds)
     idxs = list(range(total))
     idxs_on_device = idxs[device_id::num_workers]
@@ -76,7 +75,6 @@ def livecc_worker(
         responses = infer.live_cc_once_for_evaluation(
             query=overall_prompt,
             video=video, video_start=video_start, video_end=video_end,
-            remote_loader=tos_loader,
             max_new_tokens=32,
             repetition_penalty=1.15
         )

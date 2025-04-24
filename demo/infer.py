@@ -242,11 +242,7 @@ class LiveCCDemoInfer:
         repetition_penalty: float = 1.05,
     ): 
         # 1. read video clip
-        if video.startswith('ytb_'):
-            tos_key = 'youtube_video_2024/' + video
-        else:
-            tos_key = 'video/youtube/' + video
-        clip, _ = _read_video_decord_plus({'video': tos_key, 'video_start': video_start, 'video_end': video_end, 'remote_loader': remote_loader})
+        clip, _ = _read_video_decord_plus({'video': video, 'video_start': video_start, 'video_end': video_end, 'remote_loader': remote_loader})
         clip = _spatial_resize_video(clip)
 
         # 2. organize to interleave frames

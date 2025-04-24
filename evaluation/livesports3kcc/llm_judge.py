@@ -1,4 +1,4 @@
-import os, openai, json, functools
+import os, openai, json, functools, argparse
 from utils.multiprocessor import local_mt
 
 baseline_id = 'GPT-4o'
@@ -69,26 +69,40 @@ def judge(item, model_id):
     }
 
 if __name__ == '__main__':
-    model_id = 'LiveCC-7B-Instruct'
-    prediction_jsonl = 'evaluation/livesports3kcc/livecc/LiveCC-7B-Instruct.jsonl'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_id', type=str, required=True, help='Model name to compare against baseline')
+    parser.add_argument('--prediction_jsonl', type=str, required=True, help='Path to model predictions in JSONL format')
+    parser.add_argument('--output_dir', type=str, default='evaluation/livesports3kcc/judges/', help='Directory to save judgment results')
+    parser.add_argument('--num_workers', type=int, default=16)
+    args = parser.parse_args()
+
+    model_id = args.model_id
+    prediction_jsonl = args.prediction_jsonl
+    output_dir = args.output_dir
+
+    os.makedirs(output_dir, exist_ok=True)
+    save_path = os.path.join(output_dir, f'{baseline_id}_{model_id}.jsonl')
+
     print(f'{model_id} vs. {baseline_id}')
-    save_path = f'./evaluation/livesports3kcc/judges/{baseline_id}_{model_id}.jsonl'
     if os.path.exists(save_path):
         print(f'{save_path} exists, skip')
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        exit(0)
+
     video_event_id_to_model_pred = {}
     assert os.path.exists(prediction_jsonl), f'{prediction_jsonl} not found'
     for line in open(prediction_jsonl):
         datum = json.loads(line)
         video_event_id = datum['video_id'] + '_' + str(datum['event_id'])
         video_event_id_to_model_pred[video_event_id] = datum['pred']
+
     for video_event_id in video_event_id_to_baseline_pred:
-        assert video_event_id_to_model_pred[video_event_id] is not None
+        assert video_event_id in video_event_id_to_model_pred, f'Missing prediction for {video_event_id}'
+
     winner_results = local_mt(
         video_event_id_to_model_pred.items(), 
         functools.partial(judge, model_id=model_id), 
         desc=f'Call gpt4o for {model_id} vs. {baseline_id}', 
-        num_workers=16
+        num_workers=args.num_workers
     )
     
     with open(save_path, 'w') as f:
@@ -106,5 +120,5 @@ if __name__ == '__main__':
     win_rate = win_count / count * 100
     output = f'Winning Rate for {model_id} vs. {baseline_id}: {win_rate:.2f}%'
     print(output)
-    with open('evaluation/livesports3kcc/judges/judges.txt', 'a') as f:
+    with open(os.path.join(output_dir, 'log.txt'), 'a') as f:
         f.write(output + '\n')

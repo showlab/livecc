@@ -1,0 +1,1 @@
+Winning Rate for LiveCC-7B-Instruct vs. GPT-4o: 44.71%

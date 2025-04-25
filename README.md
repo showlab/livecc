@@ -47,7 +47,108 @@ Please refer to [inference.md](https://github.com/showlab/livecc/blob/main/infer
 
 ### Training
 
-Finish on Apr 25.
+The following scripts are for a single node training, with the batch size of 512. If you have multiple nodes, please try to set [torchrun arguments](https://pytorch.org/docs/stable/elastic/run.html) and ```--gradient_accumulation_steps``` accordingly.
+
+#### Pre-training
+
+##### Data
+
+https://huggingface.co/datasets/chenjoya/Live-CC-5M
+
+##### Scripts
+
+[scripts/pt_local.sh](scripts/pt_local.sh)
+
+The explanation for the training arugments:
+
+```bash
+export VIDEO_MIN_PIXELS=78400 # 100*28*28. the minimum visual frame tokens sent to llm is 100
+export FPS_MAX_FRAMES=480 # maximum number of frames for each video (480/60/2 = 4min)
+export VIDEO_MAX_PIXELS=19267584 # 24576*28*28. the maximum overall video tokens sent to llm is 24k (leave 8k for language)
+
+learning_rate=2e-5 # pretraining uses 2e-5 lr
+run_name="livecc_pretrain_24kx480x100_bs512lr$learning_rate"
+
+WANDB_PROJECT='joya.chen' TOKENIZERS_PARALLELISM=false torchrun --standalone --nproc_per_node=8 train.py \
+  --deepspeed ./scripts/deepspeed_zero2.json \                       # Use DeepSpeed ZeRO-2 config
+  --output_dir checkpoints/$run_name \                               # Where to save model checkpoints
+  --overwrite_output_dir True \                                      # Set False to resume from existing checkpoint
+  --run_name $run_name \                                             # Unique identifier for the training run (used by WandB)
+  --save_on_each_node True \                                         # Set False if nodes share a filesystem
+  --do_train True \                                                  # Enable training mode
+  --eval_strategy no \                                               # No evaluation between training steps
+  --per_device_train_batch_size 1 \                                  # Batch size per GPU
+  --gradient_accumulation_steps 64 \                                 # Effective batch size = 64 × num_gpus
+  --learning_rate $learning_rate \                                   # Learning rate to use
+  --warmup_ratio 0.03 \                                              # Warm-up proportion of training steps
+  --optim adamw_torch \                                              # Optimizer: AdamW (PyTorch implementation)
+  --lr_scheduler_type cosine \                                       # Cosine decay learning rate schedule
+  --num_train_epochs 1 \                                             # Number of training epochs
+  --logging_steps 10 \                                               # Log training metrics every 10 steps
+  --save_steps 1000 \                                                # Save checkpoint every 1000 steps
+  --bf16 True \                                                      # Use BF16 mixed precision (if supported)
+  --tf32 True \                                                      # Use TF32 precision on NVIDIA Ampere+ GPUs
+  --gradient_checkpointing True \                                    # Enable gradient checkpointing to save memory
+  --pretrained_model_name_or_path Qwen/Qwen2-VL-7B \                 # Start from pretrained Qwen2-VL-7B model
+  --annotation_paths datasets/live_cc_5m_with_seeks.jsonl \          # Dataset used for training
+  --dataloader_num_workers 16 \                                      # Number of parallel workers for data loading
+  --freeze_modules visual \                                          # Freeze visual encoder parameters
+  --use_liger_kernel True \                                          # Use Liger kernel for faster attention (must match in inference)
+  --report_to wandb                                                  # Enable logging to Weights & Biases
+```
+
+#### SFT
+
+##### Data
+
+https://huggingface.co/datasets/chenjoya/Live-WhisperX-526K
+
+https://huggingface.co/datasets/lmms-lab/LLaVA-Video-178K
+
+##### Scripts
+
+[scripts/sft_local.sh](scripts/sft_local.sh)
+
+```bash
+export VIDEO_MIN_PIXELS=78400 # 100*28*28. the minimum visual frame tokens sent to llm is 100
+export FPS_MAX_FRAMES=480 # maximum number of frames for each video (480/60/2 = 4min)
+export VIDEO_MAX_PIXELS=19267584 # 24576*28*28. the maximum overall video tokens sent to llm is 24k (leave 8k for language)
+
+learning_rate=1e-5 # sft uses 2e-5 lr
+run_name="livecc_sft_24k480x100_llava178k+hound+onevision_lr$learning_rate"
+
+WANDB_PROJECT='joya.chen' TOKENIZERS_PARALLELISM=false torchrun --standalone --nproc_per_node=8 train.py \
+  --deepspeed ./scripts/deepspeed_zero2.json \                       # Use DeepSpeed ZeRO-2 config
+  --output_dir checkpoints/$run_name \                               # Output checkpoint directory
+  --overwrite_output_dir True \                                      # Set to False to resume training
+  --run_name $run_name \                                             # Wandb and checkpoint run name
+  --save_on_each_node True \                                         # Set False if using shared storage
+  --do_train True \                                                  # Enable training mode
+  --eval_strategy no \                                               # No evaluation during training
+  --per_device_train_batch_size 1 \                                  # Batch size per GPU
+  --gradient_accumulation_steps 64 \                                 # Accumulate gradients for effective batch size = 64 × num_gpus
+  --learning_rate $learning_rate \                                   # Learning rate to use
+  --warmup_ratio 0.03 \                                              # Learning rate warm-up ratio
+  --optim adamw_torch \                                              # Optimizer type
+  --lr_scheduler_type cosine \                                       # Cosine learning rate scheduler
+  --num_train_epochs 1 \                                             # Total number of training epochs
+  --logging_steps 10 \                                               # Log every 10 steps
+  --save_steps 1000 \                                                # Save checkpoint every 1000 steps
+  --bf16 True \                                                      # Use BF16 mixed precision
+  --tf32 True \                                                      # Enable TF32 acceleration (NVIDIA Ampere+)
+  --gradient_checkpointing True \                                    # Enable gradient checkpointing for memory efficiency
+  --pretrained_model_name_or_path chenjoya/LiveCC-7B-Base \          # Initialization checkpoint
+  --annotation_paths \                                               # Training datasets:
+      datasets/live_whisperx_526k_with_seeks.jsonl \                 # - LiveCC 526k
+      datasets/llava_ov_single_image_text_mix_with_seeks.jsonl \     # - OneVision (single image)
+      datasets/llava_ov_multi_image_with_seeks.jsonl \               # - OneVision (multi-image)
+      datasets/llava_hound_video_with_seeks.jsonl \                  # - LLaVA-Hound video
+      datasets/llava_video_178k_with_seeks.jsonl \                   # - LLaVA-Video 178k
+  --dataloader_num_workers 16 \                                      # Number of workers for data loading
+  --freeze_modules visual \                                          # Do not update visual encoder
+  --use_liger_kernel True \                                          # Use Liger kernel for efficient attention (enable at inference too)
+  --report_to wandb                                                  # Report metrics to Weights & Biases
+```
 
 ### Evaluation
 

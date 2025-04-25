@@ -84,9 +84,6 @@ if __name__ == '__main__':
     save_path = os.path.join(output_dir, f'{baseline_id}_{model_id}.jsonl')
 
     print(f'{model_id} vs. {baseline_id}')
-    if os.path.exists(save_path):
-        print(f'{save_path} exists, skip')
-        exit(0)
 
     video_event_id_to_model_pred = {}
     assert os.path.exists(prediction_jsonl), f'{prediction_jsonl} not found'

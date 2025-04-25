@@ -283,7 +283,11 @@ class LiveCCDemoInfer:
             inputs.to(self.model.device)
             if past_key_values:
                 inputs['input_ids'] = torch.cat([past_ids, inputs.input_ids], dim=1) 
-            outputs = self.model.generate(**inputs, past_key_values=past_key_values, return_dict_in_generate=True, max_new_tokens=max_new_tokens, repetition_penalty=repetition_penalty)
+            outputs = self.model.generate(
+                **inputs, past_key_values=past_key_values, 
+                return_dict_in_generate=True, 
+                max_new_tokens=max_new_tokens, repetition_penalty=repetition_penalty, 
+            )
             past_key_values = outputs.past_key_values
             past_ids = outputs.sequences[:, :-1]
             responses.append([

@@ -18,8 +18,15 @@ def parse_args():
         help="HuggingFace model path, e.g., chenjoya/LiveCC-7B-Instruct"
     )
     parser.add_argument(
+        "--not_instruct_model", action="store_true", dest="not_instruct_model", help="Disable instruct model mode"
+    )
+    parser.add_argument(
         "--num_workers", type=int, default=8,
         help="Number of parallel processes/gpus to use"
+    )
+    parser.add_argument(
+        "--repetition_penalty", type=float, default=1.15,
+        help="Repetition penalty for generation. When performing livecc, 1.15 can remove most repetition."
     )
     parser.add_argument(
         "--output_dir", type=str,
@@ -32,6 +39,8 @@ def livecc_worker(
     device_id: int,
     model_name_or_path: str,
     save_dir: str,
+    simple_ctx: bool,
+    repetition_penalty: float,
     num_workers: int
 ):
     ds_val = load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="val")
@@ -61,22 +70,26 @@ def livecc_worker(
         title = record.get("event_title")
         preasr = record.get("event_asr")
 
-        commentary_prompt = (
-            "You are an expert video commentator providing real-time, insightful, "
-            "and engaging commentary on visual content.\n"
-        )
-        overall_prompt = commentary_prompt
-        if title:
-            overall_prompt += f"This is a video titled \"{title}\".\n"
-        if preasr:
-            overall_prompt += f"Here is previous commentary of the video:\n\n{preasr}\n\n"
-            overall_prompt += "Please continue to comment the video."
+        if simple_ctx:
+            title = '' if preasr else title # title or preasr
+            overall_prompt = f'{title}\n{preasr}'.strip()
+        else:
+            commentary_prompt = (
+                "You are an expert video commentator providing real-time, insightful, "
+                "and engaging commentary on visual content.\n"
+            )
+            overall_prompt = commentary_prompt
+            if title:
+                overall_prompt += f"This is a video titled \"{title}\".\n"
+            if preasr:
+                overall_prompt += f"Here is previous commentary of the video:\n\n{preasr}\n\n"
+                overall_prompt += "Please continue to comment the video."
 
         responses = infer.live_cc_once_for_evaluation(
             query=overall_prompt,
             video=video, video_start=video_start, video_end=video_end,
             max_new_tokens=32,
-            repetition_penalty=1.15
+            repetition_penalty=repetition_penalty,
         )
 
         overall_cc = (
@@ -101,6 +114,8 @@ if __name__ == "__main__":
         livecc_worker,
         model_name_or_path=args.model_name_or_path,
         save_dir=save_dir,
+        simple_ctx=args.not_instruct_model,
+        repetition_penalty=args.repetition_penalty,
         num_workers=args.num_workers
     )
     local_mp(

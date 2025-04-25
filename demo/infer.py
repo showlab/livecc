@@ -58,7 +58,7 @@ class LiveCCDemoInfer:
         state: dict,
         max_pixels: int = 384 * 28 * 28,
         default_query: str = 'Please describe the video.',
-        do_sample: bool = False,
+        do_sample: bool = True,
         repetition_penalty: float = 1.05,
         streaming_eos_base_threshold: float = None, 
         streaming_eos_threshold_step: float = None, 

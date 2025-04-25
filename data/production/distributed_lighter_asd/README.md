@@ -13,6 +13,6 @@ We optimized the following:
 - Introduce window clip sampling for a video: window=150 frames, interval=750frames
 - Distribute on multiple GPUs, multiple nodes
 
-With these optimization, we only need 1~1.5s for processing a 5min video, achieving 200~300x speed.
+With these optimization, we only need 1-1.5s for processing a 5min video, achieving 200-300x speed.
 
 Please refer to (TODO) for more details.

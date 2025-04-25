@@ -69,7 +69,7 @@ AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3
 ```
 <img width="1253" alt="image" src="https://github.com/user-attachments/assets/5064cc1f-23a7-469a-8a06-ca29707c5944" />
 
-(Slightly better than out paper results, since GPT-4o output is not strictly stable, even if we set ```seed=42, temperature=0```😂)
+(Slightly better than our paper results, since Azure GPT-4o output is not strictly stable, even if we set ```seed=42, temperature=0```😂)
 
 If you do not have GPT-4o quota, please submit results at [CVPR'25 LoVE Workshop Track2A](https://sites.google.com/view/loveucvpr25/track2a). We cover the GPT-4o evaluation cost 1 time per day for every participant.
 

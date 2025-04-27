@@ -123,7 +123,7 @@ export FPS_MAX_FRAMES=480 # maximum number of frames for each video (480/60/2 = 
 export VIDEO_MAX_PIXELS=19267584 # 24576*28*28. the maximum overall video tokens sent to llm is 24k (leave 8k for language)
 
 learning_rate=1e-5 # sft uses 1e-5 lr
-run_name="livecc_sft_24k480x100_llava178k+hound+onevision_lr$learning_rate"
+run_name="livecc_sft_24k480x100_live526k+llava178k+hound+onevision_lr$learning_rate"
 
 WANDB_PROJECT='joya.chen' TOKENIZERS_PARALLELISM=false torchrun --standalone --nproc_per_node=8 train.py \
   --deepspeed ./scripts/deepspeed_zero2.json \                       # Use DeepSpeed ZeRO-2 config

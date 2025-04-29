@@ -1,6 +1,6 @@
 [project]
 name = "livecc-utils"
-version = "0.0.1"
+version = "0.0.2"
 description = "LiveCC Vision Language Model Utils - PyTorch"
 authors = [
     { name = "Joya Chen", email = "joyachen@u.nus.edu" },

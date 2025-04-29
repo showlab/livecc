@@ -137,6 +137,7 @@ class LiveCCDemoInfer:
               **inputs, past_key_values=state.get('past_key_values', None), 
               return_dict_in_generate=True, do_sample=do_sample, 
               repetition_penalty=repetition_penalty,
+              pad_token_id=self.model.config.eos_token_id,
           )
           state['past_key_values'] = outputs.past_key_values
           state['past_ids'] = outputs.sequences[:, :-1]
@@ -245,6 +246,7 @@ class LiveCCDemoInfer:
           return_dict_in_generate=True, do_sample=do_sample, 
           repetition_penalty=repetition_penalty,
           max_new_tokens=512,
+          pad_token_id=self.model.config.eos_token_id,
       )
       state['past_key_values'] = outputs.past_key_values
       state['past_ids'] = outputs.sequences[:, :-1]

@@ -143,7 +143,10 @@ def get_smart_resized_clip(
     while len(clip_idxs) % FRAME_FACTOR != 0:
         clip_idxs = clip_idxs[:-1]
         timestamps = timestamps[:-1]
-    clip = torch.from_numpy(video_reader.get_batch(clip_idxs).asnumpy()).permute(0, 3, 1 ,2)
+    clip = torch.from_numpy(video_reader.get_batch(clip_idxs).asnumpy()).permute(0, 3, 1 ,2) # thwc or cthw -> tchw
+    # NOTE: windows OS may put channel first
+    if (clip.shape[0] == 3) and (clip.shape[1] == len(clip_idxs)):
+        clip = clip.transpose(0, 1)
     clip = transforms.functional.resize(
         clip,
         [resized_height, resized_width],

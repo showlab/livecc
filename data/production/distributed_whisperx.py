@@ -15,7 +15,7 @@ class WhisperX4Video:
     
     def load_audio(self, video: str):
         if not os.path.exists(video):
-            video = get_tos_bytes(video, self.tos_client, md5_check=True)
+            video = get_tos_bytes(video, self.tos_client, md5_check=True) # replace with your method to get video bytes or path str
         audio = AudioReader(video, sample_rate=self.sample_rate)._array.T
         return audio.mean(axis=1)
         
@@ -41,7 +41,7 @@ def line2metadata(line):
 
 if __name__ == '__main__':
     args = get_args()
-    local = int(os.getenv('ARNOLD_ID'))
+    local = int(os.getenv('ARNOLD_ID')) # replace with your local node id
     models = [WhisperX4Video(batch_size=args.batch_size, device_id=worker % 8) for worker in range(args.num_workers)]
 
     video_metadatas = json.load(open(args.metadata_path))
@@ -63,7 +63,6 @@ if __name__ == '__main__':
             with open(path, 'w') as f:
                 for video_asr in video_asrs:
                     f.write(json.dumps(video_asr) + '\n')
-            hput('./' + path, args.remote_dir)
 
     local_mt(range(args.num_workers), distribute, desc='distributed_whisperx', num_workers=args.num_workers)
 

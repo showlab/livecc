@@ -36,8 +36,8 @@ def visualize_boxes(frames: list[np.ndarray], boxes: list[list[tuple]], output_v
     frames = torch.from_numpy(np.stack(frames)).to(torch.uint8)
     write_video(output_video_path, frames, fps)
 
-def get_audio(video_bytes, start: float = None, end: float = None, sample_rate: int = 16000):
-    audio = decord.AudioReader(io.BytesIO(video_bytes), sample_rate=sample_rate)._array.T
+def get_audio(video_path: str, start: float = None, end: float = None, sample_rate: int = 16000):
+    audio = decord.AudioReader(video_path, sample_rate=sample_rate)._array.T
     if start is not None or end is not None:
         start_idx = int(start * sample_rate) if start is not None else 0
         end_idx = int(end * sample_rate) if end is not None else audio.shape[-1]

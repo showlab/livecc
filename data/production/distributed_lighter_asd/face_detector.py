@@ -22,8 +22,8 @@ class FaceDetector:
         self.width = width
         self.height = height
     
-    def __call__(self, video_bytes: bytes, start: float = None, end: float = None, num_audio_to_visual_frames: int = None, window_video_clips: torch.tensor = None): 
-        reader = decord.VideoReader(io.BytesIO(video_bytes), width=self.width, height=self.height, num_threads=2)
+    def __call__(self, video_path: str, start: float = None, end: float = None, num_audio_to_visual_frames: int = None, window_video_clips: torch.tensor = None): 
+        reader = decord.VideoReader(video_path, width=self.width, height=self.height, num_threads=2)
         if start or end:
             reader.get_frame_timestamp(0)
             frame_pts = reader._frame_pts
@@ -64,11 +64,3 @@ class FaceDetector:
         frames = normalize(frames.to(torch.float), mean=[127.5, 127.5, 127.5], std=[128, 128, 128]).numpy()
         idxs = range(len(frames))
         return local_mt(idxs, partial(self.detect, frames=frames), num_workers=self.num_workers)
-
-if __name__ == '__main__':
-    detector = FaceDetector(device_id=0)
-    from data.tos import get_tos_bytes, get_tos_client
-    import functools
-    tos_loader = functools.partial(get_tos_bytes, client=get_tos_client(), length_check=True, return_io=False)
-    video_bytes = tos_loader('video/youtube/maVXrcMY31M.mp4')
-    detector(video_bytes, start=49.28, end=289.62)

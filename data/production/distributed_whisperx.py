@@ -52,7 +52,7 @@ if __name__ == '__main__':
         local_worker_video_metadatas = local_video_metadatas[worker::args.num_workers]
         video_asrs = []
         chunk_size = 1000
-        for i in range(14000, len(local_worker_video_metadatas), chunk_size):
+        for i in range(0, len(local_worker_video_metadatas), chunk_size):
             chunked_local_worker_video_metadatas = local_worker_video_metadatas[i:i+chunk_size]
             path = f'node{local}_worker{worker}_chunk{i}-{i+len(chunked_local_worker_video_metadatas)}.jsonl'
             for video, title in tqdm.tqdm(chunked_local_worker_video_metadatas, desc=path):

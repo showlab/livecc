@@ -5,7 +5,6 @@ from face_tracker import FaceTracker
 from face_detector import FaceDetector
 from lightasd import LightASD
 
-from data.tos import get_tos_client, get_tos_bytes
 from multiprocessor import local_mt
 from asd_utils import resized_crop_faces, visualize_track_windows, get_audio
 
@@ -22,14 +21,12 @@ class DistributedASD:
             active_speaker_detector.to(f'cuda:{device_id}')
             to_gray_weights = torch.tensor([0.2989, 0.5870, 0.1140], device=f'cuda:{device_id}')
             self.distributed_asds[device_id] = [face_detector,  active_speaker_detector, to_gray_weights]
-        self.video_bytes_loader = functools.partial(get_tos_bytes, client=get_tos_client(), length_check=True, return_io=False)
         self.face_tracker = FaceTracker(iou4track=0.7, min_num_tracks=5)
 
     def __call__(self, video_path: str, start: float, end: float, device_id: int):
-        video_bytes = self.video_bytes_loader(video_path)
         face_detector, active_speaker_detector, to_gray_weights = self.distributed_asds[device_id] 
         
-        mfcc = python_speech_features.mfcc(get_audio(video_bytes, start=start, end=end))
+        mfcc = python_speech_features.mfcc(get_audio(video_path, start=start, end=end))
         mfcc = torch.from_numpy(mfcc).to(device=f'cuda:{device_id}', dtype=torch.float)
         num_audio_to_visual_frames = len(mfcc) // 4
         mfcc = mfcc[:num_audio_to_visual_frames * 4]
@@ -42,7 +39,7 @@ class DistributedASD:
         mfcc_windows = mfcc_windows.to(device=f'cuda:{device_id}', dtype=torch.float32)
 
         # face detection
-        box_windows, frame_windows = face_detector(video_bytes, start, end, num_audio_to_visual_frames=num_audio_to_visual_frames, window_video_clips=window_video_clips)
+        box_windows, frame_windows = face_detector(video_path, start, end, num_audio_to_visual_frames=num_audio_to_visual_frames, window_video_clips=window_video_clips)
         frame_windows = frame_windows.to(device=to_gray_weights.device, dtype=to_gray_weights.dtype)
         gray_frame_windows = torch.tensordot(frame_windows, to_gray_weights, dims=([2], [0]))
 

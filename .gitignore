@@ -8,3 +8,4 @@ __pycache__/
 /asset
 data/tos.py
 evaluation/livesports3kcc/livecc/*/*.json
+.gradio/certificate.pem

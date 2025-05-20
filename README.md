@@ -176,8 +176,7 @@ python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_
 # llm judge winning rate
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_id LiveCC-7B-Instruct --prediction_jsonl evaluation/livesports3kcc/livecc/LiveCC-7B-Instruct.jsonl --output_dir evaluation/livesports3kcc/judges --num_workers 16
 ```
-
-
+<img width="471" alt="image" src="https://github.com/user-attachments/assets/87d752d7-663f-4e24-8f54-b78680e45a66" />
 
 (Slightly better than our paper results, since Azure GPT-4o output is not strictly stable, even if we set ```seed=42, temperature=0```😂)
 

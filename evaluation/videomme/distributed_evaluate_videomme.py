@@ -3,7 +3,6 @@ import os
 import argparse
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
 
-from data.tos import videomme_tos_loader
 from evaluation.videomme.eval_your_results import eval_your_results
 from evaluation.distributed_mcq_predictor import mcq_predict
 from evaluation.utils import save_function_print
@@ -47,7 +46,6 @@ def main():
         model=model,
         processor=processor,
         benchmark_path=args.benchmark_path,
-        remote_loader=videomme_tos_loader,
         letters=['A', 'B', 'C', 'D'],
         use_liger_kernel='LiveCC' in args.model_name_or_path,
         per_device_eval_batch_size=1,

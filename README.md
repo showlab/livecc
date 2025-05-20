@@ -195,7 +195,7 @@ python evaluation/livesports3kcc/distributed_generate_caption.py --model_name_or
 
 Our fast distributed VideoMME evaluator needs ```videomme.jsonl``` with the data format of each line as:
 ```json
-{"video_id": "001", "duration": "short", "domain": "Knowledge", "sub_category": "Humanity & History", "url": "https://www.youtube.com/watch?v=fFjv93ACGo8", "videoID": "fFjv93ACGo8", "question_id": "001-1", "task_type": "Counting Problem", "question": "When demonstrating the Germany modern Christmas tree is initially decorated with apples, candles and berries, which kind of the decoration has the largest number?", "options": ["A. Apples.", "B. Candles.", "C. Berries.", "D. The three kinds are of the same number."], "answer": "C", "tos_key": "evaluation/testsets/video_undestanding/videomme/videos/fFjv93ACGo8.mp4", "subtitles": "[Music] and new at 6:00 ..."}
+{"video_id": "001", "duration": "short", "domain": "Knowledge", "sub_category": "Humanity & History", "url": "https://www.youtube.com/watch?v=fFjv93ACGo8", "videoID": "fFjv93ACGo8", "question_id": "001-1", "task_type": "Counting Problem", "question": "When demonstrating the Germany modern Christmas tree is initially decorated with apples, candles and berries, which kind of the decoration has the largest number?", "options": ["A. Apples.", "B. Candles.", "C. Berries.", "D. The three kinds are of the same number."], "answer": "C", "subtitles": "[Music] and new at 6:00 ..."}
 ```
 
 After preparation, please run:

@@ -15,7 +15,7 @@ class Transfer:
             video_start=video_start, # no use... has already chunked
             video_end=test_info['realtime'], # no use... has already chunked
             answer=options[test_info['type']],
-            tos_key=datum['tos_key'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
 
@@ -32,7 +32,7 @@ class Transfer:
             video_start=0,  # no use... has already chunked
             video_end=test_info['realtime'],  # no use... has already chunked
             answer=options[test_info['count']], 
-            tos_key=datum['tos_key'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
     
@@ -48,7 +48,7 @@ class Transfer:
             video_start=0, # no use... has already chunked
             video_end=test_info['realtime'], # no use... has already chunked
             answer=options[test_info['type']],
-            tos_key=datum['tos_key'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
 

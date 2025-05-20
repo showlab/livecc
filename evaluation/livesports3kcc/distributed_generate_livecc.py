@@ -1,8 +1,8 @@
-import argparse
 import os
 import json
 import tqdm
 import shutil
+import argparse
 import multiprocessing
 from functools import partial
 from datasets import load_dataset

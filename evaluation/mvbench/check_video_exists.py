@@ -1,16 +1,15 @@
 import json
-from data.tos import tos_loader
 from utils.multiprocessor import local_mt
 
 def check(line):
     datum = json.loads(line)
-    if 'tvqa' in datum['tos_key']:
+    if 'tvqa' in datum['video']:
         return line
     try:
-        tos_loader(datum['tos_key'])
+        datum['video']
         return line
     except:
-        print(datum['tos_key'], 'not exists')
+        print(datum['video'], 'not exists')
 
 lines = open('mvbench.jsonl').readlines()
 existed_lines = local_mt(lines, check, desc='check', num_workers=8)

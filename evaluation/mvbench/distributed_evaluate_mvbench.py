@@ -2,10 +2,10 @@ import torch, json, functools, tqdm, random, sys, os
 from torch.utils.data import Dataset
 from transformers import Trainer, TrainingArguments, logging, Qwen2VLForConditionalGeneration, AutoProcessor
 
+from torchvision.io import read_image
 from livecc_utils import _read_video_decord_plus, _spatial_resize_video
 from qwen_vl_utils.vision_process import process_vision_info, smart_nframes, FPS
 from data.lmm_dataset import bytes_to_pil, pil_to_tensor
-from data.tos import tos_loader
 
 logger = logging.get_logger(__name__)
 
@@ -40,18 +40,18 @@ class MVBenchMCQDataset(Dataset):
         query = self.question_prefix + datum['question'] + '\n' + '\n'.join(datum['options']) + self.question_postfix
         conversation = [{"role": "user", "content": []}]
         video_inputs = None
-        if 'tos_key' in datum:
-            if 'tvqa' in datum['tos_key']:
+        if 'video' in datum:
+            if 'tvqa' in datum['video']:
                 nframes = smart_nframes({'fps': FPS}, total_frames=len(datum['frames']), video_fps=FPS) # suggest this has been fpsed
                 sampler = torch.linspace(0, len(datum['frames']) - 1, nframes).round().long()
-                images = [pil_to_tensor(bytes_to_pil(tos_loader(os.path.join(datum['tos_key'], datum['frames'][i]), return_io=False, length_check=True))) for i in sampler]
+                images = [read_image(os.path.join(datum['video'], datum['frames'][i])) for i in sampler]
                 video = torch.stack(images)
                 video = _spatial_resize_video(video)
                 conversation[0]['content'].append({"type": "video", "video": video})
                 video_inputs = [video]
             else:
                 conversation[0]['content'].append(
-                    {"type": "video", "video": datum['tos_key'], 'remote_loader': self.remote_loader},
+                    {"type": "video", "video": datum['video'], 'remote_loader': self.remote_loader},
                 )
         conversation[0]['content'].append({"type": "text", "text": query})
         if video_inputs is None:
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     processor = AutoProcessor.from_pretrained(model_path, padding_side='left')
     letter_idxs_predictions, benchmark_datums, process_index = mcq_predict(
         model=model, processor=processor, benchmark_path='mvbench_video_existed.jsonl',
-        remote_loader=tos_loader, letters=['A', 'B', 'C', 'D', 'E'], use_liger_kernel='LiveCC' in model_path,
+        letters=['A', 'B', 'C', 'D', 'E'], use_liger_kernel='LiveCC' in model_path,
     )
     if process_index == 0:
         video_to_results = {}

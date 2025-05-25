@@ -2,7 +2,6 @@ import os, argparse, tqdm, json, torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from decord import AudioReader
 
-from data.tos import get_tos_client, get_tos_bytes
 from utils.multiprocessor import local_mt
 
 class WhisperX4Video:
@@ -11,11 +10,8 @@ class WhisperX4Video:
         model = WhisperModel("large-v3-turbo", device="cuda", device_index=device_id, compute_type="float16")
         self.sample_rate = model.feature_extractor.sampling_rate
         self.model = BatchedInferencePipeline(model=model)
-        self.tos_client = get_tos_client()
     
     def load_audio(self, video: str):
-        if not os.path.exists(video):
-            video = get_tos_bytes(video, self.tos_client, md5_check=True) # replace with your method to get video bytes or path str
         audio = AudioReader(video, sample_rate=self.sample_rate)._array.T
         return audio.mean(axis=1)
         

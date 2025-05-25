@@ -46,7 +46,7 @@ def clip4pretrain(datum: dict, args):
             i = j
         else:
             break
-    return [{'video': datum['tos_key'], 'content': clip, 'previous': context, 'title': title, 'category': datum['category']} for clip, context in zip(clips, contexts)]
+    return [{'video': datum['video'], 'content': clip, 'previous': context, 'title': title, 'category': datum['category']} for clip, context in zip(clips, contexts)]
 
 def check(datum: dict, args):
     subtitles = datum['content']

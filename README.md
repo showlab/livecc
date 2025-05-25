@@ -249,12 +249,12 @@ The following scripts will automatically download data from [LiveSports3K](https
 python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8 --repetition_penalty 1.15
 
 # if evaluate base model, please add --not_instruct_model
-python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_path chenjoya/LiveCC-7B-Instruct --output_dir evaluation/livesports3kcc/livecc --num_workers 8 --repetition_penalty 1.15 --not_instruct_model
+python evaluation/livesports3kcc/distributed_generate_livecc.py --model_name_or_path chenjoya/LiveCC-7B-Base --output_dir evaluation/livesports3kcc/livecc --num_workers 8 --repetition_penalty 1.15 --not_instruct_model
 
 # llm judge winning rate
 AZURE_OPENAI_ENDPOINT=xxx AZURE_OPENAI_API_KEY=xxx python evaluation/livesports3kcc/llm_judge.py --model_id LiveCC-7B-Instruct --prediction_jsonl evaluation/livesports3kcc/livecc/LiveCC-7B-Instruct.jsonl --output_dir evaluation/livesports3kcc/judges --num_workers 16
 ```
-<img width="1253" alt="image" src="https://github.com/user-attachments/assets/5064cc1f-23a7-469a-8a06-ca29707c5944" />
+<img width="471" alt="image" src="https://github.com/user-attachments/assets/87d752d7-663f-4e24-8f54-b78680e45a66" />
 
 (Slightly better than our paper results, since Azure GPT-4o output is not strictly stable, even if we set ```seed=42, temperature=0```😂)
 
@@ -272,7 +272,7 @@ python evaluation/livesports3kcc/distributed_generate_caption.py --model_name_or
 
 Our fast distributed VideoMME evaluator needs ```videomme.jsonl``` with the data format of each line as:
 ```json
-{"video_id": "001", "duration": "short", "domain": "Knowledge", "sub_category": "Humanity & History", "url": "https://www.youtube.com/watch?v=fFjv93ACGo8", "videoID": "fFjv93ACGo8", "question_id": "001-1", "task_type": "Counting Problem", "question": "When demonstrating the Germany modern Christmas tree is initially decorated with apples, candles and berries, which kind of the decoration has the largest number?", "options": ["A. Apples.", "B. Candles.", "C. Berries.", "D. The three kinds are of the same number."], "answer": "C", "tos_key": "evaluation/testsets/video_undestanding/videomme/videos/fFjv93ACGo8.mp4", "subtitles": "[Music] and new at 6:00 ..."}
+{"video_id": "001", "duration": "short", "domain": "Knowledge", "sub_category": "Humanity & History", "url": "https://www.youtube.com/watch?v=fFjv93ACGo8", "videoID": "fFjv93ACGo8", "question_id": "001-1", "task_type": "Counting Problem", "question": "When demonstrating the Germany modern Christmas tree is initially decorated with apples, candles and berries, which kind of the decoration has the largest number?", "options": ["A. Apples.", "B. Candles.", "C. Berries.", "D. The three kinds are of the same number."], "answer": "C", "subtitles": "[Music] and new at 6:00 ..."}
 ```
 
 After preparation, please run:
@@ -286,15 +286,15 @@ Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish t
 
 #### OVOBench
 
-Finish on Apr 26.
+Too busy recently 😭, will update readme as soon as possible
 
 #### MVBench
 
-Finish on Apr 26.
+Too busy recently 😭, will update readme as soon as possible
 
 ### Data Production Pipeline
 
-Finish on Apr 27.
+Too busy recently 😭, will update readme as soon as possible
 
 #### Pre-training
 

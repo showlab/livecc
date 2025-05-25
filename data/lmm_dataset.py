@@ -67,11 +67,6 @@ class LMMDataset(Dataset):
         self.with_context = with_context
         self.initial_fps_frames = initial_fps_frames
         self.streaming_fps_frames = streaming_fps_frames
-        try:
-            from data.tos import tos_loader
-            self.remote_loader = functools.partial(tos_loader, length_check=True)
-        except:
-            logger.warning(f'Failed to initialize remote_loader. Load video locally instead.')
     
     def load_conversation(self, index):
         annotation_path, seek = self.handles[index]

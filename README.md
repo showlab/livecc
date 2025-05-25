@@ -27,6 +27,84 @@ pip install livecc-utils==0.0.2
 
 We finished all things in ```torch==2.6.0```, ```transformers==4.50.0```, ```liger-kernel==4.50.0```. But other versions should also work. Our full environment is [requirements.txt](requirements.txt).
 
+---
+#### Installation on Apple Silicon
+Tested on M1 Max and M2 Max with 32Gb RAM. Not really real time but working ([Live demo](demo/sources/LiveCC_on_Apple_Silicon.mp4)).
+##### Requirements
+Install developper tools
+```sh
+xcode-select --install
+```
+Install [oh-my-zsh](https://ohmyz.sh) (optionnal)
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+Install [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/install#mac-os-terminal-installer)
+```sh
+curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+bash ~/Miniconda3-latest-MacOSX-arm64.sh
+```
+
+Install [brew](https://brew.sh)
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+echo >> ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+Install git-lfs
+```sh
+brew install git-lfs
+git lfs install
+```
+##### Install LiveCC for Apple Silicon
+Clone this other repo and switch to apple_silicon branch
+```sh
+git clone https://github.com/LeJeko/livecc.git
+cd livecc
+git checkout -f apple_silicon
+```
+Create conda environment
+```sh
+conda create -n livecc python=3.12
+conda activate livecc 
+```
+Install conga-forge dependencies
+```sh
+conda install -c conda-forge deepspeed
+```
+Install this specific version of ffmpeg
+```sh
+brew install ffmpeg@4
+echo 'export PATH="/opt/homebrew/opt/ffmpeg@4/bin:$PATH"' >> ~/.zshrc
+brew link ffmpeg@4
+```
+Compile decord for arm64
+```sh
+pip install cmake
+
+git clone --recursive https://github.com/dmlc/decord
+cd decord
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+cd ../python
+pip install . --user
+cd ../..
+```
+Install dependencies
+```sh
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install transformers accelerate peft opencv-python datasets tensorboard gradio pillow-heif gpustat timm sentencepiece openai av qwen_vl_utils
+pip install livecc-utils
+```
+##### Launch LiveCC
+```sh
+python -m demo.app
+```
+
+---
 #### Advanced
 
 If you want to delve into our data production pipeline:

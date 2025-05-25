@@ -9,3 +9,5 @@ __pycache__/
 data/tos.py
 evaluation/livesports3kcc/livecc/*/*.json
 .gradio/certificate.pem
+# Custom ignored
+.DS_Store

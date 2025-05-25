@@ -30,6 +30,7 @@ We finished all things in ```torch==2.6.0```, ```transformers==4.50.0```, ```lig
 ---
 #### Installation on Apple Silicon
 Tested on M1 Max and M2 Max with 32Gb RAM. Not really real time but working ([Live demo](demo/sources/LiveCC_on_Apple_Silicon.mp4)).
+**/!\ _Do not use requirements.txt_**
 ##### Requirements
 Install developper tools
 ```sh

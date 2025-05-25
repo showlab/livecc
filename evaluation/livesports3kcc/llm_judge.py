@@ -1,9 +1,9 @@
 import os, openai, json, functools, argparse
+from datasets import load_dataset
 from utils.multiprocessor import local_mt
 
 baseline_id = 'GPT-4o'
 baseline_jsonl = 'evaluation/livesports3kcc/captions/GPT-4o.jsonl'
-gt_jsonl = 'gt_asr.jsonl' # people may do not have this before cvpr25 competition ends
 video_event_id_to_baseline_pred, video_event_id_to_gt_asr, video_start_end_to_video_event_id = {}, {}, {}
 
 for line in open(baseline_jsonl):
@@ -13,10 +13,9 @@ for line in open(baseline_jsonl):
     video_start_end_to_video_event_id[video_start_end] = video_event_id
     video_event_id_to_baseline_pred[video_event_id] = datum['pred']
 
-for line in open(gt_jsonl):
-    datum = json.loads(line)
+for datum in load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="test"):
     video_event_id = datum['video_id'] + '_' + str(datum['event_id'])
-    video_event_id_to_gt_asr[video_event_id] = datum['gt_asr']
+    video_event_id_to_gt_asr[video_event_id] = datum['event_asr_text']
 
 gpt = openai.AzureOpenAI(
     azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT'),

@@ -74,7 +74,7 @@ def pure_lm_loss(device_id: int):
 
     outputs = []
     for batch in tqdm.tqdm(dataloader, desc=device):
-        conversations, tos_keys, durations, starts, ends = zip(*batch)
+        conversations, videos, durations, starts, ends = zip(*batch)
         inputs = tokenizer.apply_chat_template(conversations, return_tensors="pt", padding=True, return_dict=True, truncation=True)
         input_ids = inputs.input_ids
         labels = torch.full_like(input_ids, fill_value=-100, dtype=input_ids.dtype)
@@ -86,7 +86,7 @@ def pure_lm_loss(device_id: int):
 
         with torch.inference_mode():
             losses = model(**inputs, reduction='none').loss.tolist() 
-            outputs.extend(list(zip(tos_keys, durations, losses, starts, ends)))
+            outputs.extend(list(zip(videos, durations, losses, starts, ends)))
     output_dir = os.path.splitext(data_path)[0] + f'_lmlosses'
     json.dump(outputs, open(f'{output_dir}/lmlosses_device{device_id}.json', 'w'))
     return outputs

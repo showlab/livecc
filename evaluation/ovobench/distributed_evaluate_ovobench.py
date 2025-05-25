@@ -4,7 +4,6 @@ import decord
 from torch.utils.data import Dataset
 from transformers import Trainer, TrainingArguments, logging, Qwen2VLForConditionalGeneration, AutoProcessor
 
-from data.tos import tos_loader
 from livecc_utils import _read_video_decord_plus, _spatial_resize_video
 from qwen_vl_utils.vision_process import process_vision_info, smart_nframes, FPS
 
@@ -93,10 +92,10 @@ class OvoBenchMCQDataset(Dataset):
         video_inputs = None
         if datum['task'] in ['REC', 'SSR', 'CRR']: # 'REC', 'SSR', 'CRR' have already been chunked
             query = datum['question']
-            video, _ = _read_may1fps_video_decord({'video': datum['tos_key'], 'remote_loader': self.remote_loader})
+            video, _ = _read_may1fps_video_decord({'video': datum['video'], 'remote_loader': self.remote_loader})
         else:
             query = self.question_prefix + datum['question'] + '\n' + '\n'.join(datum['options']) + self.question_postfix
-            video, _ = _read_may1fps_video_decord({'video': datum['tos_key'], 'video_end': datum['video_end'], 'remote_loader': self.remote_loader})
+            video, _ = _read_may1fps_video_decord({'video': datum['video'], 'video_end': datum['video_end'], 'remote_loader': self.remote_loader})
         video = _spatial_resize_video(video)
         conversation[0]['content'].append({"type": "video", "video": video})
         video_inputs = [video]
@@ -190,7 +189,7 @@ if __name__ == '__main__':
     benchmark_path = 'ovo-bench-formatted.jsonl' 
     letter_idxs_predictions, benchmark_datums, process_index = mcq_predict(
         model=model, processor=processor, benchmark_path=benchmark_path, 
-        remote_loader=tos_loader, options=options, use_liger_kernel='LiveCC' in model_path,
+        options=options, use_liger_kernel='LiveCC' in model_path,
         answer_prefix = 'The answer is:\n', 
         abcd_previous_str = '\n',
     )

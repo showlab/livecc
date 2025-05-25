@@ -1,11 +1,11 @@
-import argparse
 import os
 import json
 import tqdm
 import shutil
+import argparse
 import multiprocessing
 from functools import partial
-from datasets import load_dataset, Dataset
+from datasets import load_dataset
 from demo.infer import LiveCCDemoInfer
 from utils.multiprocessor import local_mp
 
@@ -43,17 +43,13 @@ def livecc_worker(
     repetition_penalty: float,
     num_workers: int
 ):
-    ds_val = load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="val")
-    ds_test = load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="test")
-    records = [dict(r) for r in ds_val] + [dict(r) for r in ds_test]
-    ds = Dataset.from_list(records)
-
     infer = LiveCCDemoInfer(model_path=model_name_or_path, device=f'cuda:{device_id}')
-    total = len(ds)
-    idxs = list(range(total))
+
+    ds = load_dataset('stdKonjac/LiveSports-3K', name='LiveSports_3K_CC', split="test")
+    idxs = list(range(len(ds)))
     idxs_on_device = idxs[device_id::num_workers]
 
-    # Prepare save folder for this model
+    # Prepare temporary save folder for this model
     os.makedirs(save_dir, exist_ok=True)
 
     for idx in tqdm.tqdm(idxs_on_device, desc=f"Device {device_id}", total=len(idxs_on_device)):
@@ -68,7 +64,7 @@ def livecc_worker(
         video_start = record.get("begin")
         video_end = record.get("end")
         title = record.get("event_title")
-        preasr = record.get("event_asr")
+        preasr = record.get("preasr_text")
 
         if simple_ctx:
             title = '' if preasr else title # title or preasr
@@ -116,7 +112,7 @@ if __name__ == "__main__":
         save_dir=save_dir,
         simple_ctx=args.not_instruct_model,
         repetition_penalty=args.repetition_penalty,
-        num_workers=args.num_workers
+        num_workers=args.num_workers,
     )
     local_mp(
         list(range(args.num_workers)),

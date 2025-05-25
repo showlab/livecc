@@ -1,7 +1,6 @@
 import json, os
 from transformers import Qwen2VLForConditionalGeneration, Qwen2_5_VLForConditionalGeneration, AutoProcessor # Qwen2_5OmniThinkerForConditionalGeneration
 
-from data.tos import tos_loader
 from evaluation.distributed_mcq_predictor import mcq_predict
 from evaluation.utils import save_function_print
 
@@ -34,7 +33,7 @@ if __name__ == '__main__':
     processor = AutoProcessor.from_pretrained(model_path if model_path != 'Qwen/Qwen2-VL-7B' else 'Qwen/Qwen2-VL-7B-Instruct', padding_side='left')
     letter_idxs_predictions, benchmark_datums, process_index = mcq_predict(
         model=model, processor=processor, benchmark_path='sports3k-qa.jsonl', 
-        remote_loader=tos_loader, letters=['A', 'B', 'C', 'D'], use_liger_kernel='LiveCC' in model_path,
+        letters=['A', 'B', 'C', 'D'], use_liger_kernel='LiveCC' in model_path,
     )
     if process_index == 0:
         video_id_to_results = {}

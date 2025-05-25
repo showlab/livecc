@@ -7,10 +7,7 @@ from liger_kernel.transformers import apply_liger_kernel_to_qwen2_vl
 apply_liger_kernel_to_qwen2_vl()
 from transformers import Trainer, Qwen2VLForConditionalGeneration, AutoProcessor, TrainingArguments, logging
 
-from data.tos import get_tos_client, get_tos_bytes
-
 logger = logging.get_logger(__name__)
-tos_loader_with_length_check = functools.partial(get_tos_bytes, client=get_tos_client(), md5_check=True)
 
 class VideoFramesDataset(Dataset):
     def __init__(self, videos: list[str], processor: AutoProcessor):
@@ -23,7 +20,7 @@ class VideoFramesDataset(Dataset):
     def getitem(self, i):
         video = self.videos[i]
         num_frames = 8
-        reader = decord.VideoReader(tos_loader_with_length_check(video), num_threads=2)
+        reader = decord.VideoReader(video, num_threads=2)
         idxs = torch.linspace(0, len(reader) - 1, num_frames).round().long()
         images = torch.from_numpy(reader.get_batch(idxs).asnumpy()).permute(0, 3, 1, 2)
         images = resize(images, (320, 180), interpolation=InterpolationMode.BICUBIC, antialias=True)

@@ -34,9 +34,9 @@ class MCQDataset(Dataset):
         datum = self.datums[i]
         query = self.question_prefix + datum['question'] + '\n' + '\n'.join(datum['options']) + self.question_postfix
         conversation = [{"role": "user", "content": []}]
-        if 'tos_key' in datum:
+        if 'video' in datum:
             conversation[0]['content'].append(
-                {"type": "video", "video": datum['tos_key'], 'remote_loader': self.remote_loader},
+                {"type": "video", "video": datum['video'], 'remote_loader': self.remote_loader},
             )
             if 'video_start' in datum:
                 conversation[0]['content'][-1]['video_start'] = datum['video_start']

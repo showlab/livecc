@@ -52,6 +52,7 @@ with gr.Blocks() as demo:
             gr_examples = gr.Examples(
                 examples=[
                     'demo/sources/howto_fix_laptop_mute_1080p.mp4',
+                    'demo/sources/LiveCC_on_Apple_Silicon.mp4',
                     'demo/sources/writing_mute_1080p.mp4',
                     'demo/sources/spacex_falcon9_mute_1080p.mp4',
                     'demo/sources/warriors_vs_rockets_2025wcr1_mute_1080p.mp4',

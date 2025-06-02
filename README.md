@@ -56,7 +56,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 Install git-lfs
 ```sh
-brew install git-lfs
+pip3 install git-lfs
 git lfs install
 ```
 ##### Install LiveCC for Apple Silicon
@@ -70,10 +70,6 @@ Create conda environment
 ```sh
 conda create -n livecc python=3.12
 conda activate livecc 
-```
-Install conga-forge dependencies
-```sh
-conda install -c conda-forge deepspeed
 ```
 Install this specific version of ffmpeg
 ```sh

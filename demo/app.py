@@ -15,7 +15,7 @@ if hf_spaces:
         import spaces
     except Exception as e:
         print(e)
-        
+
 import os
 import numpy as np
 import gradio as gr
@@ -63,10 +63,7 @@ with gr.Blocks() as demo:
             gr_examples = gr.Examples(
                 examples=[
                     'demo/sources/howto_fix_laptop_mute_1080p.mp4',
-                    'demo/sources/writing_mute_1080p.mp4',
-                    'demo/sources/spacex_falcon9_mute_1080p.mp4',
                     'demo/sources/warriors_vs_rockets_2025wcr1_mute_1080p.mp4',
-                    'demo/sources/dota2_facelessvoid_mute_1080p.mp4'
                 ],
                 inputs=[gr_video],
             )
@@ -91,15 +88,20 @@ with gr.Blocks() as demo:
                 yield response, state
                 
             def gr_chatinterface_chatbot_clear_fn(gr_dynamic_trigger):
+                gradio_backend.infer._cached_video_readers_with_hw = {}
                 return {}, {}, 0, gr_dynamic_trigger
             gr_chatinterface = gr.ChatInterface(
                 fn=gr_chatinterface_fn,
                 type="messages", 
                 additional_inputs=[gr_state, gr_video, gr_radio_mode],
-                additional_outputs=[gr_state]
+                additional_outputs=[gr_state],
+            )
+            gr.Examples(
+                examples=["Please commentate on Game 1 of 2025 Playoffs First Round.", "CVPR 2025 VLog."],
+                inputs=[gr_chatinterface.textbox]
             )
             gr_chatinterface.chatbot.clear(fn=gr_chatinterface_chatbot_clear_fn, inputs=[gr_dynamic_trigger], outputs=[gr_video_state, gr_state, gr_static_trigger, gr_dynamic_trigger])
-            gr_clean_button.click(fn=lambda :[[], *gr_chatinterface_chatbot_clear_fn()], inputs=[gr_dynamic_trigger], outputs=[gr_video_state, gr_state, gr_static_trigger, gr_dynamic_trigger])
+            gr_clean_button.click(fn=gr_chatinterface_chatbot_clear_fn, inputs=[gr_dynamic_trigger], outputs=[gr_video_state, gr_state, gr_static_trigger, gr_dynamic_trigger])
             
             # @spaces.GPU
             def gr_for_streaming(history: list[gr.ChatMessage], video_state: dict, state: dict, mode: str, static_trigger: int, dynamic_trigger: int): 

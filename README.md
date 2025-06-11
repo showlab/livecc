@@ -25,7 +25,7 @@ pip install flash-attn --no-build-isolation
 pip install livecc-utils==0.0.2
 ```
 
-We finished all things in ```torch==2.6.0```, ```transformers==4.50.0```, ```liger-kernel==4.50.0```. But other versions should also work. Our full environment is [requirements.txt](requirements.txt).
+We finished all things in ```torch==2.6.0```, ```transformers==4.50.0```, ```liger-kernel==0.5.5```. But other versions should also work. Our full environment is [requirements.txt](requirements.txt).
 
 #### Advanced
 

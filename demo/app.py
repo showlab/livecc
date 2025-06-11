@@ -1,10 +1,21 @@
-hf_spaces = False
-js_monitor = False # if False, will not care about the actual video timestamp in front end. Suitable for enviroment with unsolvable latency (e.g. hf spaces)
+import argparse
+
+parser = argparse.ArgumentParser(description="Set runtime flags")
+parser.add_argument("--hf_spaces", action="store_true", help="Use this flag if running on Hugging Face Spaces.")
+parser.add_argument("--js_monitor", action="store_true", default=True,
+                    help="Whether to use JS-based video timestamp monitoring (disable for environments with high latency).")
+
+args = parser.parse_args()
+
+hf_spaces = args.hf_spaces
+js_monitor = args.js_monitor
+
 if hf_spaces:
     try:
         import spaces
     except Exception as e:
         print(e)
+        
 import os
 import numpy as np
 import gradio as gr

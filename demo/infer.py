@@ -105,6 +105,8 @@ class LiveCCDemoInfer:
         
         # 3. fetch frames in required timestamps
         clip, clip_timestamps, clip_idxs = get_smart_resized_clip(video_reader, resized_height, resized_width, timestamps, video_pts, video_pts_index_from=last_video_pts_index+1)
+        if len(clip_idxs) == 0:
+            return
         state['last_video_pts_index'] = clip_idxs[-1]
         state['last_timestamp'] = clip_timestamps[-1]
 

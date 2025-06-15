@@ -42,8 +42,8 @@ with gr.Blocks() as demo:
     gr.Markdown("### [LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale (CVPR 2025)](https://showlab.github.io/livecc/)")
     gr.Markdown("1️⃣ Select Mode, Real-Time Commentary (LiveCC) or Conversation (Common QA/Multi-turn)")
     gr.Markdown("2️⃣🅰️ **Real-Time Commentary:  Input a query (optional) -> Click or upload a video**.")
-    gr.Markdown("2️⃣🅱️ **Conversation: Click or upload a video -> Input a query**. But as the past_key_values support in ZeroGPU is not good, multi-turn conversation could be slower.")
-    gr.Markdown("*HF Space Gradio has unsolvable latency (10s~20s), and not support flash-attn. If you want to enjoy the very real-time experience, please deploy locally https://github.com/showlab/livecc*")
+    gr.Markdown("2️⃣🅱️ **Conversation: Click or upload a video -> Input a query**.")
+    # gr.Markdown("*HF Space Gradio has unsolvable latency (10s~20s), and not support flash-attn. If you want to enjoy the very real-time experience, please deploy locally https://github.com/showlab/livecc*")
     gr_state = gr.State({}, render=False) # control all useful state, including kv cache
     gr_video_state = gr.JSON({}, visible=False) # only record video state, belong to gr_state but lightweight
     gr_static_trigger = gr.Number(value=0, visible=False) # control start streaming or stop
@@ -64,6 +64,7 @@ with gr.Blocks() as demo:
                 examples=[
                     'demo/sources/howto_fix_laptop_mute_1080p.mp4',
                     'demo/sources/warriors_vs_rockets_2025wcr1_mute_1080p.mp4',
+                    'demo/sources/cvpr25_vlog.mp4',
                 ],
                 inputs=[gr_video],
             )

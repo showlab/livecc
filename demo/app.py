@@ -98,7 +98,7 @@ with gr.Blocks() as demo:
                 additional_outputs=[gr_state],
             )
             gr.Examples(
-                examples=["Please commentate on Game 1 of 2025 Playoffs First Round.", "CVPR 2025 VLog."],
+                examples=["Please commentate on Game 1 of 2025 Playoffs First Round.", "My VLog~"],
                 inputs=[gr_chatinterface.textbox]
             )
             gr_chatinterface.chatbot.clear(fn=gr_chatinterface_chatbot_clear_fn, inputs=[gr_dynamic_trigger], outputs=[gr_video_state, gr_state, gr_static_trigger, gr_dynamic_trigger])

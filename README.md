@@ -2,7 +2,7 @@
 
 <a href="https://showlab.github.io/livecc/" target="_blank"><img alt="Homepage" src="https://img.shields.io/badge/🌍 Homepage-d35400?color=d35400" /></a>
 <a href="https://huggingface.co/spaces/chenjoya/livecc" target="_blank"><img alt="Demo" src="https://img.shields.io/badge/🤗 Demo-ffc107?color=ffc107" /></a>
-<a href="https://arxiv.org/abs/" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/📄 Paper-28a745?color=28a745" /></a>
+<a href="https://huggingface.co/papers/2504.16030" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/📄 Paper-28a745?color=28a745" /></a>
 <a href="https://huggingface.co/chenjoya/LiveCC-7B-Instruct" target="_blank"><img alt="Checkpoint" src="https://img.shields.io/badge/🤗 Model-2980b9?color=2980b9" /></a>
 <a href="https://huggingface.co/datasets/chenjoya/Live-WhisperX-526K" target="_blank"><img alt="Data" src="https://img.shields.io/badge/🤗 Dataset-8e44ad?color=8e44ad" /></a>
 <a href="https://huggingface.co/datasets/stdKonjac/LiveSports-3K" target="_blank"><img alt="Data" src="https://img.shields.io/badge/🤗 Benchmark-8e44ad?color=007bff" /></a>

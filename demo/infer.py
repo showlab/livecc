@@ -32,11 +32,18 @@ class LiveCCDemoInfer:
     streaming_time_interval = streaming_fps_frames / fps
     frame_time_interval = 1 / fps
 
-    def __init__(self, model_path: str = None, device: str = 'cuda'):
+    def __init__(self, model_path: str = None, device: str = None):
+        if device is None:
+            if torch.backends.mps.is_available():
+                device = 'mps'
+            elif torch.cuda.is_available():
+                device = 'cuda'
+            else:
+                device = 'cpu'
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_path, torch_dtype="auto", 
             device_map=device, 
-            attn_implementation='flash_attention_2'
+            attn_implementation='flash_attention_2' if device == 'cuda' else None
         )
         self.processor = AutoProcessor.from_pretrained(model_path, use_fast=False)
         self.streaming_eos_token_id = self.processor.tokenizer(' ...').input_ids[-1]

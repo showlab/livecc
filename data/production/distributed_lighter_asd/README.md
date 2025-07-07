@@ -1,4 +1,4 @@
-# Lighter-ASD
+## Lighter-ASD
 
 ASD (Active Speaker Detection) determines if and when each visible person in the video is speaking.
 
@@ -15,4 +15,23 @@ We optimized the following:
 
 With these optimization, we only need 1-1.5s for processing a 5min video, achieving 200-300x speed.
 
-Please refer to (TODO) for more details.
+
+### Distributed Run 
+
+Please refer to [main.py](https://github.com/showlab/livecc/blob/main/data/production/distributed_lighter_asd/main.py)
+
+- Input:  Make sure the input is a jsonl, each line is
+```
+{
+    'video': video_path,
+    'content': [[start_time, end_time]],
+}
+```
+
+- Node ID: In our system ```os.getenv('ARNOLD_ID')``` can be used to get node ID. Please modify accordingly.
+
+
+- Output: After processing, results on each node will be pushed to a hdfs folder, the file name is  ```f'idx2asd_local{local}_global{args.num_nodes}.json'```. In the saved json, each item is 
+```
+{idx: asd_ratio} # asd ratio means the talking-head ratio of this video
+```

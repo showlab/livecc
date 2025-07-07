@@ -107,7 +107,7 @@ def filter(lower_bound, upper_bound):
         f.writelines(filtered_lines)
 
 if __name__ == '__main__':
-    # outputs = local_mp(list(range(8)), pure_lm_loss, desc='pure lm loss', num_workers=num_gpus)
+    outputs = local_mp(list(range(8)), pure_lm_loss, desc='pure lm loss', num_workers=num_gpus)
     filter(1.5, 5)
     
     

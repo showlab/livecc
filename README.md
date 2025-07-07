@@ -218,11 +218,7 @@ Too busy recently 😭, will update readme as soon as possible
 
 ### Data Production Pipeline
 
-Too busy recently 😭, will update readme as soon as possible
-
-#### Pre-training
-
-#### SFT
+Please refer to [data/production/README.md](https://github.com/showlab/livecc/tree/main/data/production/README.md)
 
 ### Citation
 

@@ -43,7 +43,7 @@ class LiveCCDemoInfer:
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_path, torch_dtype="auto", 
             device_map=device, 
-            attn_implementation='flash_attention_2' if device == 'cuda' else None
+            attn_implementation='flash_attention_2' if 'cuda' in device else None
         )
         self.processor = AutoProcessor.from_pretrained(model_path, use_fast=False)
         self.streaming_eos_token_id = self.processor.tokenizer(' ...').input_ids[-1]
@@ -246,7 +246,7 @@ class LiveCCDemoInfer:
         self,
         query: str,
         video: str,
-        video_start: float = None,
+        video_start: float = 0,
         video_end: float = None,
         remote_loader: callable = None,
         max_new_tokens: int = 32,

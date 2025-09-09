@@ -210,7 +210,38 @@ Typically, it costs ~40min (no subtitles) or ~50min (with subtitles) to finish t
 
 #### OVOBench
 
-Too busy recently 😭, will update readme as soon as possible
+First, make the data structure of OVOBench like:
+
+```
+ovobench
+├── AutoEvalMetaData
+├── COIN
+├── cross_task
+├── Ego4D
+├── hirest
+├── MovieNet
+├── OpenEQA
+├── ovo_bench_new.json
+├── perception_test
+├── star
+├── thumos
+├── youcook2
+└── YouTube_Games
+```
+
+Then, do some preprocessing for CER, REC, SSR tracks to simplify distributed evaluation code:
+
+```
+python evaluation/ovobench/transfer_annotation_format.py --input .../ovobench/ovo_bench_new.json --output .../ovobench/ovo-bench-formatted.jsonl
+```
+
+The above will create the file ```ovo-bench-formatted.jsonl``` under your ovobench dir. Finally, do evaluation:
+
+```
+torchrun --standalone --nproc_per_node=8 evaluation/ovobench/distributed_evaluate_ovobench.py --benchmark_dir .../ovobench
+```
+
+The results will be stored in ```evaluation/ovobench/results```.
 
 #### MVBench
 

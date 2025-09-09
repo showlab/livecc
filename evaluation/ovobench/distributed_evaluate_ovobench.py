@@ -1,4 +1,4 @@
-import json, os, torch, functools, tqdm, random, sys
+import json, os, torch, functools, tqdm, random, sys, argparse
 import numpy as np
 import decord
 from torch.utils.data import Dataset
@@ -26,8 +26,6 @@ def _read_may1fps_video_decord(ele: dict):
     video_path = ele["video"]
     if os.path.exists(video_path):
         vr = decord.VideoReader(video_path, num_threads=2)
-    elif ele['remote_loader'] is not None:
-        vr = decord.VideoReader(ele['remote_loader'](video_path), num_threads=2)
     else:
         raise ValueError(f'video_path {video_path} not found')
     video_start = ele.get('video_start', None)
@@ -70,7 +68,7 @@ def save_function_print(function: callable, save_path: str, *args, **kwargs):
         sys.stdout = original_stdout 
 
 class OvoBenchMCQDataset(Dataset):
-    def __init__(self, remote_loader, path, question_prefix, question_postfix, answer_prefix, sample: int = None):
+    def __init__(self, path, question_prefix, question_postfix, answer_prefix, sample: int = None):
         lines = open(path).readlines()
         if sample is not None:
             random.seed(42)
@@ -81,7 +79,7 @@ class OvoBenchMCQDataset(Dataset):
         self.question_prefix = question_prefix
         self.question_postfix = question_postfix
         self.answer_prefix = answer_prefix
-        self.remote_loader = remote_loader
+        self.data_dir = os.path.dirname(path)
         
     def __len__(self):
         return len(self.datums)
@@ -92,10 +90,13 @@ class OvoBenchMCQDataset(Dataset):
         video_inputs = None
         if datum['task'] in ['REC', 'SSR', 'CRR']: # 'REC', 'SSR', 'CRR' have already been chunked
             query = datum['question']
-            video, _ = _read_may1fps_video_decord({'video': datum['video'], 'remote_loader': self.remote_loader})
         else:
             query = self.question_prefix + datum['question'] + '\n' + '\n'.join(datum['options']) + self.question_postfix
-            video, _ = _read_may1fps_video_decord({'video': datum['video'], 'video_end': datum['video_end'], 'remote_loader': self.remote_loader})
+        video, _ = _read_may1fps_video_decord({
+            'video': os.path.join(self.data_dir, datum['video']), 
+            'video_start': datum['video_start'], 
+            'video_end': datum['video_end']
+        })
         video = _spatial_resize_video(video)
         conversation[0]['content'].append({"type": "video", "video": video})
         video_inputs = [video]
@@ -116,7 +117,7 @@ class OvoBenchMCQDataset(Dataset):
         inputs = processor(
             text=texts,
             images=None,
-            videos=video_inputs,
+            videos=list(video_inputs),
             padding=True,
             return_tensors="pt",
         )
@@ -130,7 +131,6 @@ def mcq_predict(
     processor, 
     benchmark_path: str, 
     options: list[str], 
-    remote_loader: callable,
     question_prefix: str = '', 
     question_postfix: str = '\nPlease select the correct answer.', 
     answer_prefix: str = 'Answer:', 
@@ -140,7 +140,7 @@ def mcq_predict(
     dataloader_num_workers: int = 4,
 ):
     strict_option_ids = [processor.tokenizer(f'{abcd_previous_str}{_}').input_ids[-1] for _ in options] 
-    dataset = OvoBenchMCQDataset(remote_loader, benchmark_path, question_prefix=question_prefix, question_postfix=question_postfix, answer_prefix=answer_prefix)
+    dataset = OvoBenchMCQDataset(benchmark_path, question_prefix=question_prefix, question_postfix=question_postfix, answer_prefix=answer_prefix)
     trainer = Trainer(
         model=model, 
         args=TrainingArguments(
@@ -182,11 +182,16 @@ def evaluate_ovobench_results(results: list):
         print(f'Forward Tracing avg.: {sum(fr_accs)}/{len(fr_accs)}={sum(fr_accs)/len(fr_accs)}')
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Format OVO-Bench dataset JSONL file.")
+    parser.add_argument("--benchmark_dir", type=str, required=True, help="Path to ovobench dir.")
+    args = parser.parse_args()
+    benchmark_path = os.path.join(args.benchmark_dir, 'ovo-bench-formatted.jsonl')
+
     model_path = "chenjoya/LiveCC-7B-Instruct"
     model = Qwen2VLForConditionalGeneration.from_pretrained(model_path, torch_dtype="auto", attn_implementation='flash_attention_2')
     processor = AutoProcessor.from_pretrained(model_path, padding_side='left')
     options = ['No', 'Yes', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E']
-    benchmark_path = 'ovo-bench-formatted.jsonl' 
+    
     letter_idxs_predictions, benchmark_datums, process_index = mcq_predict(
         model=model, processor=processor, benchmark_path=benchmark_path, 
         options=options, use_liger_kernel='LiveCC' in model_path,
@@ -200,7 +205,6 @@ if __name__ == '__main__':
                 'id': datum['id'],
                 "task": datum['task'],
                 "question": datum['question'],
-                "options": datum['options'],
                 "answer": datum['answer'],
                 "response": options[letter_idx_prediction],
             })

@@ -1,4 +1,4 @@
-import json
+import json, argparse
 
 class Transfer:
     @staticmethod
@@ -8,14 +8,13 @@ class Transfer:
         video_start = datum['ask_time']
         annos = [dict(
             id=datum['id'],
-            question_id=datum['question_id'],
             task=datum['task'],
             question=question,
-            options=options,
-            video_start=video_start, # no use... has already chunked
-            video_end=test_info['realtime'], # no use... has already chunked
+            # options=options,
+            video_start=video_start, 
+            video_end=test_info['realtime'], 
             answer=options[test_info['type']],
-            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'],
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
 
@@ -25,14 +24,13 @@ class Transfer:
         options = [str(i) for i in range(11)]
         annos = [dict(
             id=datum['id'],
-            question_id=datum['question_id'],
             task=datum['task'],
             question=question,
-            options=options,
-            video_start=0,  # no use... has already chunked
-            video_end=test_info['realtime'],  # no use... has already chunked
+            # options=options,
+            video_start=0,  
+            video_end=test_info['realtime'],  
             answer=options[test_info['count']], 
-            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'],
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
     
@@ -41,25 +39,40 @@ class Transfer:
         options = ["No", "Yes"]
         annos = [dict(
             id=datum['id'],
-            question_id=datum['question_id'],
             task=datum['task'],
             question=f"""You're watching a tutorial video which contain a sequential of steps. The following is one step from the whole procedures:\n\n{test_info['step']}\n\nYour task is to decide: Is the man/woman in the video currently carrying out this step?\nReturn "Yes" if the man/woman in the video is currently performing this step;\nReturn "No" if not.""",
-            options=options,
-            video_start=0, # no use... has already chunked
-            video_end=test_info['realtime'], # no use... has already chunked
+            # options=options,
+            video_start=0, 
+            video_end=test_info['realtime'], 
             answer=options[test_info['type']],
-            video=datum['video'].replace('.mp4', f'_{i}.mp4'),
+            video=datum['video'],
         ) for i, test_info in enumerate(datum['test_info'])]
         return annos
 
+    @staticmethod
+    def format_other(datum):
+        datum['video_start'] = 0
+        datum['video_end'] = datum.pop('realtime')
+        choices = ['A', 'B', 'C', 'D', 'E']
+        datum['options'] = [f'{choices[i]}. {option}' for i, option in enumerate(datum['options'])]
+        datum['answer'] = choices[datum.pop('gt')]
+        return datum
+
 if __name__ == '__main__':
-    path = 'ovo-bench-forward.jsonl'
-    save_path = 'ovo-bench-forward-formatted.jsonl'
+    parser = argparse.ArgumentParser(description="Format OVO-Bench dataset JSONL file.")
+    parser.add_argument("--input", "-i", type=str, required=True, help="Path to input JSONL file.")
+    parser.add_argument("--output", "-o", type=str, required=True, help="Path to save formatted JSONL file.")
+    args = parser.parse_args()
+
     annos = []
-    with open(path) as f:
-        for line in f:
-            datum = json.loads(line)
-            annos.extend(getattr(Transfer, 'format_' + datum['task'].lower())(datum))
-    with open(save_path, 'w') as f:
+    for datum in json.load(open(args.input)):
+        if hasattr(Transfer, 'format_' + datum['task'].lower()):
+            formatter = getattr(Transfer, 'format_' + datum['task'].lower())
+            annos.extend(formatter(datum))
+        else:
+            formatter = Transfer.format_other
+            annos.append(formatter(datum))
+
+    with open(args.output, 'w') as f:
         for anno in annos:
             f.write(json.dumps(anno) + '\n')

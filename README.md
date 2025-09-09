@@ -229,7 +229,7 @@ ovobench
 └── YouTube_Games
 ```
 
-Then, do some preprocessing for CER, REC, SSR tracks to simplify distributed evaluation code:
+Then, do some preprocessing for annotation json to simplify the distributed evaluation:
 
 ```
 python evaluation/ovobench/transfer_annotation_format.py --input .../ovobench/ovo_bench_new.json --output .../ovobench/ovo-bench-formatted.jsonl

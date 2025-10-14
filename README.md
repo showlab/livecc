@@ -20,12 +20,12 @@ Ensure you have Python version >= 3.11 installed.
 
 ```sh
 pip install torch torchvision torchaudio
-pip install "transformers<=4.51.3" accelerate deepspeed peft opencv-python decord datasets tensorboard gradio pillow-heif gpustat timm sentencepiece openai av==12.0.0 qwen_vl_utils liger_kernel numpy==1.24.4
+pip install "transformers>=4.52.4" accelerate deepspeed peft opencv-python decord datasets tensorboard gradio pillow-heif gpustat timm sentencepiece openai av==12.0.0 qwen_vl_utils liger_kernel numpy==1.24.4
 pip install flash-attn --no-build-isolation
 pip install livecc-utils==0.0.2
 ```
 
-We finished all things in ```torch==2.6.0```, ```transformers==4.50.0```, ```liger-kernel==0.5.5```. But other versions should also work. Our full environment is [requirements.txt](requirements.txt).
+We trained our models under ```torch==2.6.0```, ```transformers==4.50.0```, ```liger-kernel==0.5.5```. But other versions should also work. 
 
 #### Advanced
 

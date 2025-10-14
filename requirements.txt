@@ -206,7 +206,6 @@ pyOpenSSL==25.0.0
 pyparsing==3.0.9
 PySocks==1.7.1
 pysubs2==1.8.0
-pytest==6.2.5
 python-apt==2.6.0
 python-consul==1.1.0
 python-dateutil==2.9.0.post0

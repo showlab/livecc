@@ -10,7 +10,7 @@
 
 [![Watch the video](webpage/static/videos/thumbnail_yt.png)](https://www.youtube.com/watch?v=56sfodoHXo4)
 
-NOTE: Please follow the arxiv version <a href="https://huggingface.co/papers/2504.16030" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/📄 Paper-28a745?color=28a745" /></a> of our paper, rather than the CVPR camera ready version. We submitted a wrong version and they do not allow to replace...
+*NOTE: Please follow the arxiv version <a href="https://huggingface.co/papers/2504.16030" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/📄 Paper-28a745?color=28a745" /></a> of our paper, rather than the CVPR camera ready version. We are sorry we submitted a wrong version and they do not allow to replace...*
 
 ### TLDR
 
